@@ -111,6 +111,9 @@ async function buildSpeciesObj(){
     species = await getTutorLearnsets(species)
     species = await getSprite(species)
 
+    delete species["SPECIES_ZYGARDE_CELL"]
+    delete species["SPECIES_ZYGARDE_CORE"]
+
     await localStorage.setItem("species", LZString.compressToUTF16(JSON.stringify(species)))
     return species
 }

@@ -366,7 +366,7 @@ function regexSprite(textSprite, conversionTable, species){
                 const matchPath = line.match(/graphics\/pokemon\/(\w+\/\w+\/\w+\/\w+\/\w+|\w+\/\w+\/\w+\/\w+|\w+\/\w+\/\w+|\w+\/\w+|\w+)\//i) // ¯\_(ツ)_/¯
                 if(matchPath !== null){
                     const path = matchPath[1]
-                    const url = `https://raw.githubusercontent.com/BuffelSaft/pokeemerald/master/graphics/pokemon/${path}/front.png`
+                    const url = `https://raw.githubusercontent.com/${repo}/main/graphics/pokemon/${path}/front.png`
                     for(let i = 0; i < conversionTable[conversion].length; i++){
                         species[speciesArray[i]]["sprite"] = url
                     }
