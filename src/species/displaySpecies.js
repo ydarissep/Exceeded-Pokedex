@@ -120,6 +120,22 @@ function displaySpecies(){
         }
         row.append(abilitiesContainer)
 
+
+        let innatesContainer = document.createElement("td")
+        innatesContainer.className = "innates"
+        for (let j = 0; j < species[speciesName]["innates"].length; j++){
+            let innates = document.createElement("div")
+            let innatesName = species[speciesName]["innates"][j]
+
+            if(innatesName !== "ABILITY_NONE"){
+                innates.innerText = `${sanitizeString(innatesName)} `
+
+                innatesContainer.append(innates)
+            }
+        }
+        row.append(innatesContainer)
+        
+
         let speciesObj = species[speciesName]
 
         row.append(createBaseStatsContainer("HP", "baseHP", speciesObj))

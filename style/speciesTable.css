@@ -18,6 +18,9 @@
 #speciesTableThead th.abilities {
 	width: 175px;
 }
+#speciesTableThead th.innates {
+    width: 175px;
+}
 #speciesTableThead th.baseHP {
 	width: 40px;
 }
@@ -47,6 +50,10 @@
 .abilities :not(th) {
     font-style: italic;
     font-size: 0.9rem;
+}
+
+.innates :not(th) {
+    font-size: 0.9rem;   
 }
 
 #speciesTableTbody .nameContainer {
@@ -83,7 +90,7 @@
 }
 
 @media 
-only screen and (max-width: 700px) {
+only screen and (max-width: 800px) {
     #speciesTable, #speciesTableThead, #speciesTableTbody, #speciesTable td, #speciesTable tr { 
         padding: 0.3rem 0;
         display: block;
@@ -130,4 +137,10 @@ only screen and (max-width: 700px) {
         padding: 0.2rem 2%;
         font-style: italic;
     }
+
+    .innates div {
+        display: inline-block !important;
+        border: none;
+        padding: 0.2rem 2%;
+    }    
 }

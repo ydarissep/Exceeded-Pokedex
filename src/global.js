@@ -86,6 +86,7 @@ const headerSpeciesSprite = document.querySelector("#speciesTableThead th.sprite
 const headerSpeciesName = document.querySelector("#speciesTableThead th.species")
 const headerSpeciesTypes = document.querySelector("#speciesTableThead th.types")
 const headerSpeciesAbilities = document.querySelector("#speciesTableThead th.abilities")
+const headerSpeciesInnates = document.querySelector("#speciesTableThead th.innates")
 const headerSpeciesHP = document.querySelector("#speciesTableThead th.baseHP")
 const headerSpeciesAtk = document.querySelector("#speciesTableThead th.baseAttack")
 const headerSpeciesDef = document.querySelector("#speciesTableThead th.baseDefense")
@@ -193,6 +194,12 @@ headerSpeciesAbilities.addEventListener("click", () => {
         sortTableByClassName(speciesTable, "abilities", asc = true)
     else
         sortTableByClassName(speciesTable, "abilities", asc = false)
+})
+headerSpeciesInnates.addEventListener("click", () => {
+    if(headerSpeciesInnates.classList.contains("th-sort-desc"))
+        sortTableByClassName(speciesTable, "innates", asc = true)
+    else
+        sortTableByClassName(speciesTable, "innates", asc = false)
 })
 headerSpeciesHP.addEventListener("click", () => {
     if(headerSpeciesHP.classList.contains("th-sort-desc"))
