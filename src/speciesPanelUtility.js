@@ -13,6 +13,7 @@ const speciesSprite = document.getElementById("speciesSprite")
 const speciesType1 = document.getElementById("speciesType1")
 const speciesType2 = document.getElementById("speciesType2")
 const speciesAbilities = document.getElementById("speciesAbilities")
+const speciesInnates = document.getElementById("speciesInnates")
 const speciesBaseStatsGraph = document.getElementById("speciesBaseStatsGraph")
 const speciesEvolutionsContainer = document.getElementById("speciesEvolutionsContainer")
 const speciesEvoMethod = document.getElementById("speciesEvoMethod")
@@ -86,6 +87,35 @@ async function createSpeciesPanel(name){
             abilityContainer.append(abilityName)
             abilityContainer.append(abilityDescription)
             speciesAbilities.append(abilityContainer)
+        }
+    }
+
+    while (speciesInnates.firstChild)
+        speciesInnates.removeChild(speciesInnates.firstChild)
+
+    for (let i = 0; i < species[name]["innates"].length; i++){
+        const ability = species[name]["innates"][i]
+        if(species[name]["innates"][i] !== "ABILITY_NONE"){
+            const abilityContainer = document.createElement("div")
+            const abilityName = document.createElement("span")
+            const abilityDescription = document.createElement("span")
+
+            abilityName.innerText = sanitizeString(ability)
+            abilityDescription.innerText = abilities[ability]["description"]
+
+            /*
+            if(i === 2)
+                abilityName.className = "bold"
+            else
+                abilityName.className = "italic"
+            */
+
+            abilityDescription.className = "speciesPanelAbilitiesDescriptionPadding"
+            abilityContainer.className = "flex wrap"
+
+            abilityContainer.append(abilityName)
+            abilityContainer.append(abilityDescription)
+            speciesInnates.append(abilityContainer)
         }
     }
 
@@ -282,7 +312,7 @@ async function createSpeciesPanel(name){
 
     while(speciesPanelTutorTableTbody.firstChild)
         speciesPanelTutorTableTbody.removeChild(speciesPanelTutorTableTbody.firstChild)
-    buildSpeciesPanelLearnsetsTable(speciesPanelTutorTableTbody, name, "tutorLearnsets")
+    buildSpeciesPanelEggMovesTable(speciesPanelTutorTableTbody, name, "tutorLearnsets")
 
     while(speciesPanelEggMovesTableTbody.firstChild)
         speciesPanelEggMovesTableTbody.removeChild(speciesPanelEggMovesTableTbody.firstChild)

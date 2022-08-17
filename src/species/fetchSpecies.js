@@ -34,7 +34,9 @@ async function getTMHMLearnsets(species){
     const rawTMHMLearnsets = await fetch(`https://raw.githubusercontent.com/${repo}/main/data/species/tmhm_learnsets.h`)
     const textTMHMLearnsets = await rawTMHMLearnsets.text()
 
-    return regexTMHMLearnsets(textTMHMLearnsets, species)
+    const TMHMLearnsetsConversionTable = getTMHMLearnsetsConversionTable(textTMHMLearnsets)
+
+    return regexTMHMLearnsets(textTMHMLearnsets, TMHMLearnsetsConversionTable, species)
 }
 
 async function getEvolution(species){
@@ -63,18 +65,12 @@ async function getEggMovesLearnsets(species){
 
 async function getTutorLearnsets(species){
     footerP("Fetching tutor learnsets")
-    const rawTutorLearnsets = await fetch("https://raw.githubusercontent.com/ydarissep/inclement-emerald-pokedex/main/src/species/tutorLearnsets.json");
-    const tutorLearnsets = await rawTutorLearnsets.json();
+    const rawTutorLearnsets = await fetch(`https://raw.githubusercontent.com/${repo}/main/data/species/tutor_learnsets.h`)
+    const textTutorLearnsets = await rawTutorLearnsets.text()
 
-    const rawConversionMoveBadge = await fetch("https://raw.githubusercontent.com/ydarissep/inclement-emerald-pokedex/main/src/species/conversionMoveBadge.json")
-    const conversionMoveBadge = await rawConversionMoveBadge.json();
+    const tutorLearnsetsConversionTable = getTutorLearnsetsConversionTable(textTutorLearnsets)
 
-    const rawMoves = await fetch("https://raw.githubusercontent.com/BuffelSaft/pokeemerald/master/include/constants/moves.h")
-    const textMoves = await rawMoves.text()
-
-    const tutorLearnsetsConversionTable = getTutorLearnsetsConversionTable(textMoves)
-
-    return regexTutorLearnsets(tutorLearnsets, tutorLearnsetsConversionTable, conversionMoveBadge, species)
+    return regexTutorLearnsets(textTutorLearnsets, tutorLearnsetsConversionTable, species)
 }
 
 async function getSprite(species){
@@ -105,11 +101,25 @@ async function buildSpeciesObj(){
     species = await getEvolution(species)
     species = await getForms(species) // should be called in that order until here
     species = await getBaseStats(species)
+    //species = await getChanges(species, "https://raw.githubusercontent.com/Skeli789/Dynamic-Pokemon-Expansion/master/src/Base_Stats.c")
     species = await getLevelUpLearnsets(species)
     species = await getTMHMLearnsets(species)
     species = await getEggMovesLearnsets(species)
     species = await getTutorLearnsets(species)
     species = await getSprite(species)
+
+
+    Object.keys(species).forEach(name => {
+        if(species[name]["type1"] === "TYPE_FIRE" || species[name]["type2"] === "TYPE_FIRE"){
+            if(!species[name]["tutorLearnsets"].includes("MOVE_BURN_UP"))
+                species[name]["tutorLearnsets"].push("MOVE_BURN_UP")
+        }
+        if(species[name]["type1"] === "TYPE_DRAGON" || species[name]["type2"] === "TYPE_DRAGON"){
+            if(!species[name]["tutorLearnsets"].includes("MOVE_DRACO_METEOR"))
+                species[name]["tutorLearnsets"].push("MOVE_DRACO_METEOR")
+        }
+    })
+
 
     delete species["SPECIES_ZYGARDE_CELL"]
     delete species["SPECIES_ZYGARDE_CORE"]
@@ -130,6 +140,7 @@ function initializeSpeciesObj(species){
         species[name]["baseSpeed"] = 0
         species[name]["BST"] = 0
         species[name]["abilities"] = []
+        species[name]["innates"] = []
         species[name]["type1"] = ""
         species[name]["type2"] = ""
         species[name]["item1"] = ""

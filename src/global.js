@@ -329,7 +329,7 @@ speciesFilterType.addEventListener("click", () => {
 })
 speciesFilterAbility.addEventListener("click", () => {
     const list = abilitiesIngameNameArray
-    createFilter(list, species, ["abilities"], filterCount++, speciesFilterButton, "Ability")
+    createFilter(list, species, ["abilities", "innates"], filterCount++, speciesFilterButton, "Ability")
 })
 speciesFilterLearnset.addEventListener("click", () => {
     const list = movesIngameNameArray

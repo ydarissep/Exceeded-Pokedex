@@ -37,7 +37,7 @@
 	color: #777777;	
 }
 
-#speciesAbilitiesContainer {
+#speciesAbilitiesContainer, #speciesInnatesContainer {
 	font-size: 11pt;
 }
 
