@@ -7,16 +7,14 @@
 }
 
 #abilitiesTableThead th.description {
-	width: 400px;
+	width: 1000px;
 }
 
 #abilitiesFilterButton {
 	padding-bottom: 5px;
 }
 
-@media 
-only screen and (max-width: 350px) {
-	#abilitiesTableTbody {
-		font-size: 14px;
-	}
+#abilitiesTableTbody .description {
+	font-size: min(max(1vmax, 11px), 16px) !important;
+	padding: 15px;
 }

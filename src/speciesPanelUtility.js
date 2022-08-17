@@ -103,12 +103,7 @@ async function createSpeciesPanel(name){
             abilityName.innerText = sanitizeString(ability)
             abilityDescription.innerText = abilities[ability]["description"]
 
-            /*
-            if(i === 2)
-                abilityName.className = "bold"
-            else
-                abilityName.className = "italic"
-            */
+            abilityName.className = "italic"
 
             abilityDescription.className = "speciesPanelAbilitiesDescriptionPadding"
             abilityContainer.className = "flex wrap"

@@ -23,7 +23,7 @@ function regexAbilities(textAbilities, abilities){
         }
 
 
-        const matchConversionDescription = lines[i].match(/s\w+Description/i)
+        const matchConversionDescription = lines[i].match(/s\w+DescriptionExtended/i)
         if(matchConversionDescription !== null){
             const conversionDescription = matchConversionDescription[0]
 
@@ -42,7 +42,7 @@ function regexAbilities(textAbilities, abilities){
             else{
                 const matchDescription = lines[i].match(/_ *\( *" *(.*)" *\) *;/i)
                 if(matchDescription !== null){
-                    const description = matchDescription[1]
+                    const description = matchDescription[1].replaceAll("-\\n", "").replaceAll("\\n", " ")
                     if(conversionTable[conversionDescription] !== undefined){
                         for(let j = 0; j < conversionTable[conversionDescription].length; j++)
                         abilities[conversionTable[conversionDescription][j]]["description"] = description
