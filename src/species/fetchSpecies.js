@@ -1,6 +1,6 @@
 async function getSpecies(species){
     footerP("Fetching species")
-    const rawSpecies = await fetch(`https://raw.githubusercontent.com/${repo}/main/data/species/species.h`)
+    const rawSpecies = await fetch(`https://raw.githubusercontent.com/${repo}/species.h`)
     const textSpecies = await rawSpecies.text()
 
     return regexSpecies(textSpecies, species)
@@ -9,17 +9,17 @@ async function getSpecies(species){
 
 async function getBaseStats(species){
     footerP("Fetching base stats")
-    const rawBaseStats = await fetch(`https://raw.githubusercontent.com/${repo}/main/data/species/base_stats.h`)
+    const rawBaseStats = await fetch(`https://raw.githubusercontent.com/${repo}/base_stats.h`)
     const textBaseStats = await rawBaseStats.text()
     return regexBaseStats(textBaseStats, species)
 }
 
 async function getLevelUpLearnsets(species){
     footerP("Fetching level up learnsets")
-    const rawLevelUpLearnsets = await fetch(`https://raw.githubusercontent.com/${repo}/main/data/species/level_up_learnsets.h`)
+    const rawLevelUpLearnsets = await fetch(`https://raw.githubusercontent.com/${repo}/level_up_learnsets.h`)
     const textLevelUpLearnsets = await rawLevelUpLearnsets.text()
 
-    const rawLevelUpLearnsetsPointers = await fetch(`https://raw.githubusercontent.com/${repo}/main/data/species/level_up_learnset_pointers.h`)
+    const rawLevelUpLearnsetsPointers = await fetch(`https://raw.githubusercontent.com/${repo}/level_up_learnset_pointers.h`)
     const textLevelUpLearnsetsPointers = await rawLevelUpLearnsetsPointers.text()
 
 
@@ -31,7 +31,7 @@ async function getLevelUpLearnsets(species){
 
 async function getTMHMLearnsets(species){
     footerP("Fetching TMHM learnsets")
-    const rawTMHMLearnsets = await fetch(`https://raw.githubusercontent.com/${repo}/main/data/species/tmhm_learnsets.h`)
+    const rawTMHMLearnsets = await fetch(`https://raw.githubusercontent.com/${repo}/tmhm_learnsets.h`)
     const textTMHMLearnsets = await rawTMHMLearnsets.text()
 
     const TMHMLearnsetsConversionTable = getTMHMLearnsetsConversionTable(textTMHMLearnsets)
@@ -41,7 +41,7 @@ async function getTMHMLearnsets(species){
 
 async function getEvolution(species){
     footerP("Fetching evolution line")
-    const rawEvolution = await fetch(`https://raw.githubusercontent.com/${repo}/main/data/species/evolution.h`)
+    const rawEvolution = await fetch(`https://raw.githubusercontent.com/${repo}/evolution.h`)
     const textEvolution = await rawEvolution.text()
 
     return regexEvolution(textEvolution, species)
@@ -49,7 +49,7 @@ async function getEvolution(species){
 
 async function getForms(species){
     footerP("Fetching alternate forms")
-    const rawForms = await fetch(`https://raw.githubusercontent.com/${repo}/main/data/species/form_species_tables.h`)
+    const rawForms = await fetch(`https://raw.githubusercontent.com/${repo}/form_species_tables.h`)
     const textForms = await rawForms.text()
 
     return regexForms(textForms, species)
@@ -57,7 +57,7 @@ async function getForms(species){
 
 async function getEggMovesLearnsets(species){
     footerP("Fetching egg moves learnsets")
-    const rawEggMoves = await fetch(`https://raw.githubusercontent.com/${repo}/main/data/species/egg_moves.h`)
+    const rawEggMoves = await fetch(`https://raw.githubusercontent.com/${repo}/egg_moves.h`)
     const textEggMoves = await rawEggMoves.text()
 
     return regexEggMovesLearnsets(textEggMoves, species)
@@ -65,7 +65,7 @@ async function getEggMovesLearnsets(species){
 
 async function getTutorLearnsets(species){
     footerP("Fetching tutor learnsets")
-    const rawTutorLearnsets = await fetch(`https://raw.githubusercontent.com/${repo}/main/data/species/tutor_learnsets.h`)
+    const rawTutorLearnsets = await fetch(`https://raw.githubusercontent.com/${repo}/tutor_learnsets.h`)
     const textTutorLearnsets = await rawTutorLearnsets.text()
 
     const tutorLearnsetsConversionTable = getTutorLearnsetsConversionTable(textTutorLearnsets)
@@ -75,10 +75,10 @@ async function getTutorLearnsets(species){
 
 async function getSprite(species){
     footerP("Fetching sprites... this could take a while")
-    const rawFrontPicTable = await fetch(`https://raw.githubusercontent.com/${repo}/main/data/species/front_pic_table.h`)
+    const rawFrontPicTable = await fetch(`https://raw.githubusercontent.com/${repo}/front_pic_table.h`)
     const textFrontPicTable = await rawFrontPicTable.text()
 
-    const rawSprite = await fetch(`https://raw.githubusercontent.com/${repo}/main/data/species/pokemon.h`)
+    const rawSprite = await fetch(`https://raw.githubusercontent.com/${repo}/pokemon.h`)
     const textSprite = await rawSprite.text()
 
     const spriteConversionTable = getSpriteConversionTable(textFrontPicTable, species)

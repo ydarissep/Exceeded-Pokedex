@@ -1,4 +1,4 @@
-window.repo = "ydarissep/Exceeded-Pokedex"
+window.repo = "benicioneto/Exceeded-Pokedex/main"
 
 window.panelSpecies = ""
 
