@@ -11,7 +11,6 @@ function displaySpecies(){
         if(i >= 75)
             row.className = "hideTemp"
 
-
         let IDcontainer = document.createElement("td")
         let ID = document.createElement("div")
         IDcontainer.className = "ID"
@@ -97,7 +96,7 @@ function displaySpecies(){
                 continue
             }
             if(abilityName !== "ABILITY_NONE"){
-                ability.innerText = `${sanitizeString(abilityName)} `
+                ability.innerText = `${abilities[abilityName]["ingameName"]} `
                 if(j === 2){
                     ability.style.fontWeight = "bold"
                 }
@@ -121,6 +120,7 @@ function displaySpecies(){
         row.append(abilitiesContainer)
 
 
+
         let innatesContainer = document.createElement("td")
         innatesContainer.className = "innates"
         for (let j = 0; j < species[speciesName]["innates"].length; j++){
@@ -134,7 +134,8 @@ function displaySpecies(){
             }
         }
         row.append(innatesContainer)
-        
+
+
 
         let speciesObj = species[speciesName]
 
@@ -220,7 +221,7 @@ function renderSprite(speciesName){
             imageData.data[i + 2] === backgroundColor[2]
           ) imageData.data[i + 3] = 0
         }
-        context.putImageData(imageData, 0, 0) 
+        context.putImageData(imageData, 0, 0)
 
         spritesObj[speciesName] = LZString.compressToUTF16(canvas.toDataURL())
 

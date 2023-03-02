@@ -44,14 +44,14 @@ function regexBaseStats(textBaseStats, species){
     const lines = textBaseStats.split("\n")
 
     const regex = /baseHP|baseAttack|baseDefense|baseSpeed|baseSpAttack|baseSpDefense|type1|type2|item1|item2|eggGroup1|eggGroup2|abilities|innates/i
-    let change = false, value, name
+    let stop = false, value, name
 
     lines.forEach(line => {
 
         if(/#else/i.test(line))
-                change = true
+                stop = true
         if(/#endif/i.test(line))
-                change = false
+                stop = false
 
 
         const matchSpecies = line.match(/SPECIES_\w+/i)
@@ -78,20 +78,203 @@ function regexBaseStats(textBaseStats, species){
                     if(value !== null)
                         value = value[0]
                 }
-                else if(match === "abilities" || match === "innates"){
+                else if(match === "abilities"){
                     value = line.match(/ABILITY_\w+/ig)
+                    if(value !== null){
+                        for (let i = 0; i < 3; i++){
+                            if(value[i] === "ABILITY_NONE" || value[i] === undefined && i >= 1)
+                                value[i] = value[i-1]
+                        }
+                    }
+                }
+                else if(match === "innates")
+                {
+                    let innates = []
+                    value = line.match(/ABILITY_\w+/ig)
+                    if(value !== null){
+                        value.forEach(innate => {
+                            if(innate != "ABILITY_NONE"){
+                                innates.push(innate)
+                            }
+                        })
+                        value = innates
+                    }
                 }
 
 
-                if(change === true)
-                    species[name]["changes"].push([match, value])
-                else if(change === false)
+
+                if(!stop){
                     species[name][match] = value
+                }
             }
         }
     })
     return getBST(species)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function regexChanges(textChanges, species){
+    const lines = textChanges.split("\n")
+
+    const regex = /baseHP|baseAttack|baseDefense|baseSpeed|baseSpAttack|baseSpDefense|type1|type2/i
+    let stop = false, value, name, buildDefines = true, defines = {}, define = "", keep = false, argument = [], argumentDefine = []
+
+    for(let i = 0; i < lines.length; i++){
+        const line = lines[i]
+        if(buildDefines && /gSpeciesInfo/i.test(line)){
+            buildDefines = false
+        }
+        if(buildDefines){
+            const matchDefine = line.match(/#define (.*)/i)
+            if(matchDefine !== null){
+                if(!/\\/.test(line)){
+                    Object.keys(defines).forEach(testDefine => {
+                        const tempDefine = testDefine.match(/(\w+)/)
+                        if(tempDefine[1] && line.includes(tempDefine[1])){
+                            define = matchDefine[1].replace(testDefine, "").trim()
+                            defines[define] = defines[testDefine]
+                        }
+                    })
+                }
+                else{
+                    define = matchDefine[1].replaceAll("\\", "").trim()
+                    defines[define] = []
+                }
+            }
+            else if(keep && define in defines){
+                defines[define].push(line)
+            }
+            if(/\\/.test(line)){
+                keep = true
+            }
+            else{
+                keep = false
+            }
+        }
+        else{
+
+            if(/#else/i.test(line))
+                    stop = true
+            if(/#endif/i.test(line))
+                    stop = false
+
+
+            const matchSpecies = line.match(/\[(SPECIES_\w+)\] *=(.*)/i)
+            if(matchSpecies !== null){
+                name = matchSpecies[1]
+                stop = false
+                argument = []
+                argumentDefine = []
+
+                if(name !== "SPECIES_NONE" && name !== "SPECIES_EGG"){
+
+                    if(matchSpecies[2]){
+                        matchDefine = matchSpecies[2].replaceAll(",", "").trim().match(/(\w+)(.*)/)
+                        define = matchDefine[1]
+                        if(matchDefine[2]){
+                            argument = matchDefine[2].match(/\w+/g)
+                        }
+                        Object.keys(defines).forEach(testDefine => {
+                            testDefine = testDefine.match(/(\w+)(.*)/)
+                            if(testDefine[1] && testDefine[1] === define){
+                                define = testDefine[0]
+                                if(testDefine[2]){
+                                    argumentDefine = testDefine[2].match(/\w+/g)
+                                }
+                            }
+                        })
+                        if(define in defines){
+                            for(let j = 0; j < defines[define].length; j++){
+                                let newLine = defines[define][j].replaceAll(" ", "").replaceAll("}", ",")
+                                for(let k = 0; k < argument.length; k++){
+                                    newLine = newLine.replace(`${argumentDefine[k]},`, `${argument[k]},`)
+                                }
+                                lines.splice(i+1, 0, newLine)
+                            }
+                        }
+                    }
+                }
+            }
+
+            if(/^\w+/.test(line.trim())){
+                define = ""
+                Object.keys(defines).forEach(testDefine => {
+                    const tempDefine = testDefine.match(/(\w+)/)
+                    if(tempDefine[1] && line.includes(tempDefine[1])){
+                        define = testDefine
+                    }
+                })
+                if(define in defines){
+                    for(let j = 0; j < defines[define].length; j++){
+                        lines.splice(i+1, 0, defines[define][j])
+                    }
+                }
+            }
+
+
+            if(name !== "SPECIES_NONE" && name !== "SPECIES_EGG"){
+                const matchRegex = line.match(regex)
+
+                if(matchRegex !== null){
+                    let match = matchRegex[0]
+
+
+
+                    if(match === "baseHP" || match === "baseAttack" || match === "baseDefense" || match === "baseSpeed" || match === "baseSpAttack" || match === "baseSpDefense"){
+                        const matchInt = line.match(/\d+/)
+                        if(matchInt !== null)
+                            value = parseInt(matchInt[0])
+                    }
+                    else if(match === "type1" || match === "type2"){
+                        value = line.match(/\w+_\w+/i)
+                        if(value !== null)
+                            value = value[0]
+                    }
+
+                    if(stop === false){
+                        if(name in species){
+                            if(match in species[name] && JSON.stringify(species[name][match]) != JSON.stringify(value)){
+                                species[name]["changes"].push([match, value])
+                            }   
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return species
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -136,9 +319,7 @@ function regexLevelUpLearnsets(textLevelUpLearnsets, conversionTable, species){
         const matchConversion = line.match(/s\w+LevelUpLearnset/i)
         if(matchConversion !== null){
             const index = matchConversion[0]
-            if(index in conversionTable){
-                speciesArray = conversionTable[index]
-            }
+            speciesArray = conversionTable[index]
         }
 
 
@@ -146,12 +327,19 @@ function regexLevelUpLearnsets(textLevelUpLearnsets, conversionTable, species){
         if(matchLevelMove !== null){
             const level = parseInt(matchLevelMove[1])
             const move = matchLevelMove[2]
-            for(let i = 0; i < speciesArray.length; i++)
-                species[speciesArray[i]]["levelUpLearnsets"].push([move, level])
+            if(speciesArray)
+            {
+                for(let i = 0; i < speciesArray.length; i++)
+                    species[speciesArray[i]]["levelUpLearnsets"].push([move, level])
+            }
         }
     })
     return species
 }
+
+
+
+
 
 
 
@@ -398,6 +586,7 @@ function regexSprite(textSprite, conversionTable, species){
     })
     return species
 }
+
 
 
 

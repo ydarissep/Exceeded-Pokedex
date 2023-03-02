@@ -73,7 +73,7 @@ async function createSpeciesPanel(name){
             const abilityName = document.createElement("span")
             const abilityDescription = document.createElement("span")
 
-            abilityName.innerText = sanitizeString(ability)
+            abilityName.innerText = abilities[ability]["ingameName"]
             abilityDescription.innerText = abilities[ability]["description"]
 
             if(i === 2)
@@ -90,6 +90,7 @@ async function createSpeciesPanel(name){
         }
     }
 
+
     while (speciesInnates.firstChild)
         speciesInnates.removeChild(speciesInnates.firstChild)
 
@@ -100,7 +101,7 @@ async function createSpeciesPanel(name){
             const abilityName = document.createElement("span")
             const abilityDescription = document.createElement("span")
 
-            abilityName.innerText = sanitizeString(ability)
+            abilityName.innerText = abilities[ability]["ingameName"]
             abilityDescription.innerText = abilities[ability]["description"]
 
             abilityName.className = "italic"
@@ -113,7 +114,7 @@ async function createSpeciesPanel(name){
             speciesInnates.append(abilityContainer)
         }
     }
-
+    
 
 
 
@@ -278,7 +279,7 @@ async function createSpeciesPanel(name){
     Object.keys(typeChart).forEach(type => {
         const typeEffectivenessContainer = document.createElement("span")
         const checkType = document.createElement("span")
-        let typeEffectivenessValue = document.createElement("span")
+        const typeEffectivenessValue = document.createElement("span")
         typeEffectivenessContainer.className = "flex flexCenter flexColumn speciesTypeChartMarginTop"
         checkType.innerText = sanitizeString(type)
         checkType.className = `background2 ${type}`
@@ -289,14 +290,6 @@ async function createSpeciesPanel(name){
             typeEffectivenessValue.innerText = typeChart[type][species[name]["type1"]]
         }
         typeEffectivenessValue.className = `typeChart${typeEffectivenessValue.innerText} background3`
-
-        if(typeEffectivenessValue.innerText === "4"){
-            typeEffectivenessValue.innerText = "2.5"
-        }
-        else if(typeEffectivenessValue.innerText === "0.25"){
-            typeEffectivenessValue.innerText = "0.4"
-        }
-
         typeEffectivenessContainer.append(checkType)
         typeEffectivenessContainer.append(typeEffectivenessValue)
         speciesTypeChart.append(typeEffectivenessContainer)

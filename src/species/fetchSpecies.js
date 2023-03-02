@@ -86,7 +86,12 @@ async function getSprite(species){
     return regexSprite(textSprite, spriteConversionTable, species)
 }
 
-
+async function getChanges(species, url){
+    footerP("Fetching species changes")
+    const rawChanges = await fetch(url)
+    const textChanges = await rawChanges.text()
+    return regexChanges(textChanges, species)
+}
 
 
 
@@ -101,7 +106,7 @@ async function buildSpeciesObj(){
     species = await getEvolution(species)
     species = await getForms(species) // should be called in that order until here
     species = await getBaseStats(species)
-    //species = await getChanges(species, "https://raw.githubusercontent.com/Skeli789/Dynamic-Pokemon-Expansion/master/src/Base_Stats.c")
+    species = await getChanges(species, "https://raw.githubusercontent.com/rh-hideout/pokeemerald-expansion/master/src/data/pokemon/species_info.h")
     species = await getLevelUpLearnsets(species)
     species = await getTMHMLearnsets(species)
     species = await getEggMovesLearnsets(species)
@@ -147,7 +152,6 @@ async function buildSpeciesObj(){
             return a - b
         })
     })
-
 
     await localStorage.setItem("species", LZString.compressToUTF16(JSON.stringify(species)))
     return species

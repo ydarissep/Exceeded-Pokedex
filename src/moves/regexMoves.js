@@ -172,10 +172,17 @@ function setMove(move, change, input, output){
         return move
     }
     else{
-       if(move[input] === undefined){
+        if(move[input] === undefined){
             move[input] = output
             return move
-       }
+        }
+        else if(typeof(output) === "object"){
+            for(let i = 0; i < output.length; i++){
+                if(!move[input].includes(output[i])){
+                    move[input].push(output[i])
+                }
+            }
+        }
     }
     return move
 }

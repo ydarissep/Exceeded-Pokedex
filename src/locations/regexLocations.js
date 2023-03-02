@@ -1,14 +1,14 @@
 function regexWildLocations(jsonWildLocations, locations){
 
 	const wildEncounters = jsonWildLocations["wild_encounter_groups"][0]["encounters"]
-	const methodArrayWild = ["land_mons", "water_mons", "rock_smash_mons", "fishing_mons"]
+	const methodArrayWild = ["land_morning_mons", "land_mons", "land_night_mons", "water_mons", "rock_smash_mons", "fishing_mons"]
 
 	for(let i = 0; i < wildEncounters.length; i++)
 	{
 		let zone = "Placeholder"
 
-		if("base_label" in wildEncounters[i]){
-			zone = wildEncounters[i]["base_label"].replace(/^g|_/g, "").replace(/([A-Z])/g, " $1").replace(/(\d+)/g, " $1").trim()
+		if("map" in wildEncounters[i]){
+			zone = sanitizeString(wildEncounters[i]["map"].replace(/^MAP_/i, "").replace(/([A-Z])(\d)/g, '$1 $2').trim())
 
 			if(!(zone in locations)){
 				locations[zone] = {}
@@ -38,7 +38,7 @@ function regexWildLocations(jsonWildLocations, locations){
 			}
 		}
 		else{
-			console.log("missing \"base_label\" in wildEncounters[", i, "] (regexWildLocations)")
+			console.log("missing \"map\" in wildEncounters[", i, "] (regexWildLocations)")
 			continue
 		}
 	}
@@ -67,8 +67,14 @@ function replaceMethodString(method, index){
 	else if(method.match(/smash/i) !== null){
 		return "Rock Smash"
 	}
+	else if(method.match(/morning/i) !== null){
+		return "Morning"
+	}
+	else if(method.match(/night/i) !== null){
+		return "Night"
+	}
 	else if(method.match(/land/i) !== null){
-		return "Land"
+		return "Day"
 	}
     else{
     	console.log(method)
@@ -78,7 +84,7 @@ function replaceMethodString(method, index){
 
 
 function returnRarity(method, index){
-	if(method === "Land" || method === "land_mons"){
+	if(method === "Morning" || method === "Day" || method === "Night" || method === "Surfing"){
 		if(index === 0 || index === 1)
 			return 20
 		else if(index >= 2 && index <= 5){
@@ -96,23 +102,25 @@ function returnRarity(method, index){
 		else
 			return 100
 	}
-	else if(method === "Surfing" || method === "Rock Smash"){
+	else if(method === "Rock Smash"){
 		if(index === 0)
-			return 60
+			return 40
 		else if(index === 1)
 			return 30
 		else if(index === 2)
-			return 5
+			return 15
 		else if(index === 3)
+			return 10
+		else if(index === 4)
 			return 5
 		else
 			return 100
 	}
 	else if(method === "Old Rod"){
 		if(index === 0)
-			return 60
+			return 70
 		else if(index === 1)
-			return 40
+			return 30
 		else 
 			return 100
 	}
@@ -125,16 +133,14 @@ function returnRarity(method, index){
 			return 100
 	}
 	else if(method === "Super Rod"){
-		if(index === 5)
+		if(index === 5 || index === 6)
 			return 40
-		else if(index === 6)
-			return 30
 		else if(index === 7)
 			return 15
 		else if(index === 8)
-			return 10
+			return 4
 		else if(index === 9)
-			return 5
+			return 1
 		else 
 			return 100
 	}

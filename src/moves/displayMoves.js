@@ -111,7 +111,13 @@ function displayMoves(){
 
         row.append(effectContainer)
 
-        
+        row.addEventListener("click", async() => {
+            if(!speciesButton.classList.contains("activeButton"))
+                await tableButtonClick("species")
+            window.scrollTo({ top: 0})
+            deleteFiltersFromTable()
+            createFilter(moves[moveName]["ingameName"], "Move")
+        }) 
     }
 }
 

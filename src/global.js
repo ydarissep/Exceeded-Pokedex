@@ -1,8 +1,8 @@
 window.repo = "benicioneto/Exceeded-Pokedex/main"
+window.repoDex = "ydarissep/Exceeded-Pokedex/main"
 
 window.panelSpecies = ""
 
-window.filterCount = 0
 const tableFilter = document.getElementById("tableFilter")
 
 
@@ -13,28 +13,6 @@ const update = document.getElementById("update")
 
 const patchnoteModeCheckbox = document.getElementById("patchnoteModeCheckbox")
 const onlyShowChangedPokemonCheckbox = document.getElementById("onlyShowChangedPokemonCheckbox")
-
-const speciesFilterType = document.getElementById("speciesFilterType")
-const speciesFilterAbility = document.getElementById("speciesFilterAbility")
-const speciesFilterLearnset = document.getElementById("speciesFilterLearnset")
-const speciesFilterHeldItem = document.getElementById("speciesFilterHeldItem")
-const speciesFilterEggGroup = document.getElementById("speciesFilterEggGroup")
-const speciesFilterHP = document.getElementById("speciesFilterHP")
-const speciesFilterAtk = document.getElementById("speciesFilterAtk")
-const speciesFilterDef = document.getElementById("speciesFilterDef")
-const speciesFilterSpA = document.getElementById("speciesFilterSpA")
-const speciesFilterSpD = document.getElementById("speciesFilterSpD")
-const speciesFilterSpe = document.getElementById("speciesFilterSpe")
-const speciesFilterBST = document.getElementById("speciesFilterBST")
-
-
-
-const movesFilterType = document.getElementById("movesFilterType")
-const movesFilterFlag = document.getElementById("movesFilterFlag")
-const movesFilterPriority = document.getElementById("movesFilterPriority")
-const movesFilterEffect = document.getElementById("movesFilterEffect")
-const movesFilterTarget = document.getElementById("movesFilterTarget")
-
 
 
 
@@ -53,6 +31,12 @@ const abilitiesButton = document.getElementById("abilitiesButton")
 const abilitiesTable = document.getElementById("abilitiesTable")
 const abilitiesTableThead = document.getElementById("abilitiesTableThead")
 const abilitiesTableTbody = document.getElementById("abilitiesTableTbody")
+
+
+const locationsInput = document.getElementById("locationsInput")
+const locationsButton = document.getElementById("locationsButton")
+const locationsTable = document.getElementById("locationsTable")
+const locationsTableTbody = document.getElementById("locationsTableTbody")
 
 
 const movesInput = document.getElementById("movesInput")
@@ -86,7 +70,6 @@ const headerSpeciesSprite = document.querySelector("#speciesTableThead th.sprite
 const headerSpeciesName = document.querySelector("#speciesTableThead th.species")
 const headerSpeciesTypes = document.querySelector("#speciesTableThead th.types")
 const headerSpeciesAbilities = document.querySelector("#speciesTableThead th.abilities")
-const headerSpeciesInnates = document.querySelector("#speciesTableThead th.innates")
 const headerSpeciesHP = document.querySelector("#speciesTableThead th.baseHP")
 const headerSpeciesAtk = document.querySelector("#speciesTableThead th.baseAttack")
 const headerSpeciesDef = document.querySelector("#speciesTableThead th.baseDefense")
@@ -94,6 +77,12 @@ const headerSpeciesSpA = document.querySelector("#speciesTableThead th.baseSpAtt
 const headerSpeciesSpD = document.querySelector("#speciesTableThead th.baseSpDefense")
 const headerSpeciesSpe = document.querySelector("#speciesTableThead th.baseSpeed")
 const headerSpeciesBST = document.querySelector("#speciesTableThead th.BST")
+
+const headerLocationsSprite = document.querySelector("#locationsTableThead th.sprite")
+const headerLocationsSpecies = document.querySelector("#locationsTableThead th.species")
+const headerLocationsRarity = document.querySelector("#locationsTableThead th.rarity")
+const headerLocationsZone = document.querySelector("#locationsTableThead th.zone")
+
 const utilityButton = document.querySelector('.utilityButton')
 
 
@@ -195,12 +184,6 @@ headerSpeciesAbilities.addEventListener("click", () => {
     else
         sortTableByClassName(speciesTable, "abilities", asc = false)
 })
-headerSpeciesInnates.addEventListener("click", () => {
-    if(headerSpeciesInnates.classList.contains("th-sort-desc"))
-        sortTableByClassName(speciesTable, "innates", asc = true)
-    else
-        sortTableByClassName(speciesTable, "innates", asc = false)
-})
 headerSpeciesHP.addEventListener("click", () => {
     if(headerSpeciesHP.classList.contains("th-sort-desc"))
         sortTableByClassName(speciesTable, "baseHP", asc = true, parseINT = true)
@@ -250,27 +233,33 @@ headerSpeciesBST.addEventListener("click", () => {
 
 
 
+
+
+
 speciesInput.addEventListener("input", e => {
     const value = e.target.value
-    if(speciesIngameNameArray.includes(value)){
-        speciesInput.blur()
-    }
-    filterTableInput(value, [2, 3, 4], speciesTableTbody)
+    filterFilters(value)
+    filterTableInput(value, species, ["name", "abilities", "innates"])
 })
 abilitiesInput.addEventListener("input", e => {
     const value = e.target.value
     if(abilitiesIngameNameArray.includes(value)){
         abilitiesInput.blur()
     }
-    filterTableInput(value, [0, 1], abilitiesTableTbody)
+    filterFilters(value)
+    filterTableInput(value, abilities, ["name", "ingameName", "description"])
 })
 movesInput.addEventListener("input", e => {
     const value = e.target.value
-    if(movesIngameNameArray.includes(value)){
-        movesInput.blur()
-    }
-    filterTableInput(value, [0, 1, 6], movesTableTbody)
+    filterFilters(value)
+    filterTableInput(value, moves, ["name", "ingameName", "effect", "description"])
 })
+locationsInput.addEventListener("input", e => {
+    const value = e.target.value
+    filterFilters(value)
+    filterTableInput(value, species, ["evolutionLine", ".locationsInfo"])
+})
+
 
 
 speciesButton.addEventListener("click", () => {
@@ -280,6 +269,10 @@ speciesButton.addEventListener("click", () => {
 abilitiesButton.addEventListener("click", () => {
     if(!abilitiesButton.classList.contains("activeButton"))
         tableButtonClick("abilities")
+})
+locationsButton.addEventListener("click", () => {
+    if(!locationsButton.classList.contains("activeButton"))
+        tableButtonClick("locations")
 })
 movesButton.addEventListener("click", () => {
     if(!movesButton.classList.contains("activeButton"))
@@ -330,96 +323,6 @@ onlyShowChangedPokemonCheckbox.addEventListener("change", e => {
 
 
 
-speciesFilterType.addEventListener("click", () => {
-    const list = createOptionArray(["type1", "type2"], species)
-    createFilter(list, species, ["type1", "type2"], filterCount++, speciesFilterButton, "Type")
-})
-speciesFilterAbility.addEventListener("click", () => {
-    const list = abilitiesIngameNameArray
-    createFilter(list, species, ["abilities", "innates"], filterCount++, speciesFilterButton, "Ability")
-})
-speciesFilterLearnset.addEventListener("click", () => {
-    const list = movesIngameNameArray
-    createFilter(list, species, ["levelUpLearnsets", "TMHMLearnsets", "tutorLearnsets", "eggMovesLearnsets"], filterCount++, speciesFilterButton, "Learnset")
-})
-speciesFilterHeldItem.addEventListener("click", () => {
-    const list = createOptionArray(["item1", "item2"], species)
-    createFilter(list, species, ["item1", "item2"], filterCount++, speciesFilterButton, "Held Item")
-})
-speciesFilterEggGroup.addEventListener("click", () => {
-    const list = createOptionArray(["eggGroup1", "eggGroup2"], species)
-    createFilter(list, species, ["eggGroup1", "eggGroup2"], filterCount++, speciesFilterButton, "Egg Group")
-})
-speciesFilterHP.addEventListener("click", () => {
-    const list = [">=", "<=", ">", "<", "="]
-    createFilter(list, species, ["baseHP"], filterCount++, speciesFilterButton, "HP", isInt = true, isOperator = true)
-})
-speciesFilterAtk.addEventListener("click", () => {
-    const list = [">=", "<=", ">", "<", "="]
-    createFilter(list, species, ["baseAttack"], filterCount++, speciesFilterButton, "Atk", isInt = true, isOperator = true)
-})
-speciesFilterDef.addEventListener("click", () => {
-    const list = [">=", "<=", ">", "<", "="]
-    createFilter(list, species, ["baseDefense"], filterCount++, speciesFilterButton, "Def", isInt = true, isOperator = true)
-})
-speciesFilterSpA.addEventListener("click", () => {
-    const list = [">=", "<=", ">", "<", "="]
-    createFilter(list, species, ["baseSpAttack"], filterCount++, speciesFilterButton, "SpA", isInt = true, isOperator = true)
-})
-speciesFilterSpD.addEventListener("click", () => {
-    const list = [">=", "<=", ">", "<", "="]
-    createFilter(list, species, ["baseSpDefense"], filterCount++, speciesFilterButton, "SpD", isInt = true, isOperator = true)
-})
-speciesFilterSpe.addEventListener("click", () => {
-    const list = [">=", "<=", ">", "<", "="]
-    createFilter(list, species, ["baseSpeed"], filterCount++, speciesFilterButton, "Spe", isInt = true, isOperator = true)
-})
-speciesFilterBST.addEventListener("click", () => {
-    const list = [">=", "<=", ">", "<", "="]
-    createFilter(list, species, ["BST"], filterCount++, speciesFilterButton, "BST", isInt = true, isOperator = true)
-})
-
-
-
-
-
-
-
-
-
-movesFilterType.addEventListener("click", () => {
-    const list = createOptionArray(["type"], moves)
-    createFilter(list, moves, ["type"], filterCount++, movesFilterButton, "Type")
-})
-movesFilterPower.addEventListener("click", () => {
-    const list = [">=", "<=", ">", "<", "="]
-    createFilter(list, moves, ["power"], filterCount++, movesFilterButton, "Power", isInt = true, isOperator = true)
-})
-movesFilterFlag.addEventListener("click", () => {
-    let list = []
-    for (const name of Object.keys(moves)){
-        for (let i = 0; i < moves[name]["flags"].length; i++){
-            const value = sanitizeString(moves[name]["flags"][i])
-            if(!list.includes(value))
-                list.push(value)
-        }
-    }
-    createFilter(list, moves, ["flags"], filterCount++, movesFilterButton, "Flag")
-})
-movesFilterPriority.addEventListener("click", () => {
-    const list = createOptionArray(["priority"], moves, isInt = true).sort()
-    createFilter(list, moves, ["priority"], filterCount++, movesFilterButton, "Priority", isInt = true)
-})
-movesFilterEffect.addEventListener("click", () => {
-    const list = createOptionArray(["effect"], moves)
-    createFilter(list, moves, ["effect"], filterCount++, movesFilterButton, "Effect")
-})
-movesFilterTarget.addEventListener("click", () => {
-    const list = createOptionArray(["target"], moves)
-    createFilter(list, moves, ["target"], filterCount++, movesFilterButton, "Target")
-})
-
-
 
 
 
@@ -442,8 +345,6 @@ closeCredits.addEventListener("click", () => {
         modal.close()
     }
 })
-
-
 
 
 
@@ -525,19 +426,43 @@ const observeOpenCredits = new IntersectionObserver(openCreditsIsTouching, optio
 observeOpenCredits.observe(openCredits)
 
 
+
+
 utilityButton.onclick = () => {
+    utilityButtonOnClick()
+}
+document.addEventListener("keydown", e => {
+    if(e.target.nodeName !== "INPUT"){
+        //e.preventDefault()
+        if(e.code === "Space"){
+            e.preventDefault()
+            utilityButtonOnClick()
+        }    
+        else if(e.code === "Enter" && panelSpecies !== ""){
+            speciesPanelMainContainer.classList.toggle("hide")
+            window.scrollTo({ top: 0})
+        }
+        else if(e.code === "Backspace" || e.code === "Escape" || e.code === "Delete"){
+            speciesPanelMainContainer.classList.add("hide")
+        }
+    }
+})
+function utilityButtonOnClick(){
     if(utilityButton.innerText === "↓"){
         speciesPanelMainContainer.classList.add("hide")
         document.getElementById(`${panelSpecies}`).scrollIntoView({ block: "center" })
     }
     else if(utilityButton.innerText === "☰" && panelSpecies !== ""){
         speciesPanelMainContainer.classList.remove("hide")
-        window.scrollTo({ top: 0, behavior: 'smooth' })
+        window.scrollTo({ top: 0})
     }
     else{
-        window.scrollTo({top: 1})
+        window.scrollTo({top: 0})
     }
 }
+
+
+
 
 
 update.addEventListener("click", () => {
