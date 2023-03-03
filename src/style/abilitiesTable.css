@@ -1,0 +1,20 @@
+#abilitiesButton {
+	width: 100px;
+}
+
+#abilitiesTableThead th.ability {
+	width: 250px;
+}
+
+#abilitiesTableThead th.description {
+	width: 1000px;
+}
+
+#abilitiesFilterButton {
+	padding-bottom: 5px;
+}
+
+#abilitiesTableTbody .description {
+	font-size: min(max(1vmax, 11px), 16px) !important;
+	padding: 15px;
+}

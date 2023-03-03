@@ -1,0 +1,28 @@
+async function getAbilities(abilities){
+    footerP("Fetching abilities")
+    const rawAbilities = await fetch(`https://raw.githubusercontent.com/${repo}/abilities.h`)
+    const textAbilities = await rawAbilities.text()
+
+    return regexAbilities(textAbilities, abilities)
+}
+
+async function buildAbilitiesObj(){
+    let abilities = {}
+    abilities = await getAbilities(abilities) 
+    delete abilities["ABILITY_NONE"]
+    delete abilities["ABILITY_NAME_LENGTH"]
+    delete abilities["ABILITY_NAMES"]
+
+    await localStorage.setItem("abilities", LZString.compressToUTF16(JSON.stringify(abilities)))
+    return abilities
+}
+
+
+async function fetchAbilitiesObj(){
+    if(!localStorage.getItem("abilities"))
+        window.abilities = await buildAbilitiesObj()
+    else
+        window.abilities = await JSON.parse(LZString.decompressFromUTF16(localStorage.getItem("abilities")))
+    
+    await displayAbilities()
+}
