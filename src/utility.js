@@ -24,7 +24,6 @@ function sanitizeString(string){
 
 
 
-
 async function fetchData(){
     await forceUpdate()
 
