@@ -393,7 +393,10 @@ function regexTMHMLearnsets(textTMHMLearnsets, conversionTable, species){
             const TMHM = matchTmhmMove[1]
             let move = matchTmhmMove[2]
             if(move === "SOLARBEAM")
-                move = "SOLAR_BEAM" // Fuck Oldplayer :)
+                move = "SOLAR_BEAM"
+            else if(move === "SWAMPY_TERRAIN"){
+                move = "SWAMP_TERRAIN"
+            }
             move = `MOVE_${move}`
 
 

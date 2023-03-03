@@ -24,6 +24,7 @@ function sanitizeString(string){
 
 
 
+
 async function fetchData(){
     await forceUpdate()
 
@@ -56,7 +57,7 @@ async function fetchTypeChart(){
 
 
 async function forceUpdate(){
-    const update = 5
+    const update = 6
     if(localStorage.getItem("update") != `${update} EE`){
         await localStorage.clear()
         await localStorage.setItem("update", `${update} EE`)
