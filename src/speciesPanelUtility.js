@@ -192,7 +192,9 @@ async function createSpeciesPanel(name){
 
     if(species[name]["forms"].length > 1){
         for (let i = 0; i < species[name]["forms"].length; i++){
-            speciesFormes.append(createClickableImgAndName(species[name]["forms"][i]))
+            if(species[species[name]["forms"][i]]){
+                speciesFormes.append(createClickableImgAndName(species[name]["forms"][i]))
+            }
         }
     }
 
@@ -335,9 +337,9 @@ speciesPanelInputSpecies.addEventListener("input", e => {
 function getSpeciesSpriteSrc(speciesName){
     const row = document.getElementById(`${speciesName}`)
     
-    if(row.getElementsByClassName("src")[0].src !== undefined)
+    if(row.getElementsByClassName("src")[0].src)
         return row.getElementsByClassName("src")[0].src
-    else if(row.getElementsByClassName("src")[0].toDataURL() !== undefined)
+    else if(row.getElementsByClassName("src")[0].toDataURL())
         return row.getElementsByClassName("src")[0].toDataURL()
     else
         return species[speciesName]["sprite"]
