@@ -4,6 +4,7 @@ window.repoDex = "ydarissep/Exceeded-Pokedex/main"
 window.tracker
 window.panelSpecies = ""
 window.scrollToSpecies = ""
+window.historyObj = []
 
 const tableFilter = document.getElementById("tableFilter")
 
@@ -271,28 +272,24 @@ locationsInput.addEventListener("input", e => {
 
 
 
-speciesButton.addEventListener("click", () => {
+speciesButton.addEventListener("click", async () => {
     if(!speciesButton.classList.contains("activeButton")){
-        tableButtonClick("species")
-        tracker = speciesTracker
+        await tableButtonClick("species")
     }
 })
-abilitiesButton.addEventListener("click", () => {
+abilitiesButton.addEventListener("click", async () => {
     if(!abilitiesButton.classList.contains("activeButton")){
-        tableButtonClick("abilities")
-        tracker = abilitiesTracker
+        await tableButtonClick("abilities")
     }
 })
-locationsButton.addEventListener("click", () => {
+locationsButton.addEventListener("click", async () => {
     if(!locationsButton.classList.contains("activeButton")){
-        tableButtonClick("locations")
-        tracker = locationsTracker
+        await tableButtonClick("locations")
     }
 })
-movesButton.addEventListener("click", () => {
+movesButton.addEventListener("click", async () => {
     if(!movesButton.classList.contains("activeButton")){
-        tableButtonClick("moves")
-        tracker = movesTracker
+        await tableButtonClick("moves")
     }
 })
 
@@ -305,7 +302,7 @@ movesButton.addEventListener("click", () => {
 
 
 patchnoteModeCheckbox.addEventListener("change", e => {
-    lazyLoading(reset = true)
+    lazyLoading(true)
 })
 
 onlyShowChangedPokemonCheckbox.addEventListener("change", e => {
@@ -319,7 +316,7 @@ onlyShowChangedPokemonCheckbox.addEventListener("change", e => {
             tracker[i]["filter"] = tracker[i]["filter"].filter(value => value !== "changed")
         }
     }
-    lazyLoading(reset = true)
+    lazyLoading(true)
 })
 
 
@@ -383,7 +380,7 @@ function speciesPanelIsTouching(entries){
     }
     else{
 
-        speciesPanelMainContainer.classList.add("hide")
+        speciesPanel("hide")
 
         if(table.getBoundingClientRect().top < 0){
             utilityButton.innerText = "↑"
@@ -440,23 +437,23 @@ document.addEventListener("keydown", e => {
             utilityButtonOnClick()
         }    
         else if(e.code === "Enter" && panelSpecies !== ""){
-            speciesPanelMainContainer.classList.toggle("hide")
+            speciesPanel("toggle")
             window.scrollTo({ top: 0})
         }
         else if(e.code === "Backspace" || e.code === "Escape" || e.code === "Delete"){
-            speciesPanelMainContainer.classList.add("hide")
+            speciesPanel("hide")
         }
     }
 })
 function utilityButtonOnClick(){
     if(utilityButton.innerText === "↓"){
-        speciesPanelMainContainer.classList.add("hide")
+        speciesPanel("hide")
         if(document.getElementById(`${scrollToSpecies}`)){
             document.getElementById(`${scrollToSpecies}`).scrollIntoView({ block: "center" })
         }
     }
     else if(utilityButton.innerText === "☰" && panelSpecies !== ""){
-        speciesPanelMainContainer.classList.remove("hide")
+        speciesPanel("show")
         window.scrollTo({ top: 0})
     }
     else{
@@ -477,6 +474,23 @@ update.addEventListener("click", () => {
 window.onbeforeunload = () => {  
     window.scrollTo(0, 0)
 }
+
+
+window.addEventListener('popstate', async () => {
+    historyObj.pop()
+    const temp = historyObj.length
+    await displayHistoryObj(historyObj.slice(-1)[0])
+    if(historyObj.length > 0){
+        window.history.pushState(null, null, await refreshURLParams())
+    }
+    else{
+        window.history.replaceState(null, null, await refreshURLParams())
+    }
+
+    while(historyObj.length > temp && temp > 0){
+        historyObj.pop()
+    }
+})
 
 
 fetchData()
