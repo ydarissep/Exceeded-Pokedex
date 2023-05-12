@@ -75,7 +75,6 @@ function regexMovesID(textMovesID, moves){
             }
             else{
                 defines.push([move, ID])
-                console.log(defines)
             }
         }
     })
