@@ -10,6 +10,11 @@ function appendAbilitiesToTable(abilitiesName){
 
     row.setAttribute("id", `${abilitiesName}`)
 
+    let abilityID = document.createElement("td")
+    abilityID.className = "abilityID"
+    abilityID.innerText = abilities[abilitiesName]["ID"]
+    row.append(abilityID)
+
     let ability = document.createElement("td")
     const abilityName = document.createElement("span")
     ability.className = "ability"

@@ -2,6 +2,10 @@
 	width: 100px;
 }
 
+#abilitiesTableThead th.abilityID {
+	width: 40px;
+}
+
 #abilitiesTableThead th.ability {
 	width: 250px;
 }

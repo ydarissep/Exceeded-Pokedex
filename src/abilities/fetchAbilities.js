@@ -6,9 +6,17 @@ async function getAbilities(abilities){
     return regexAbilities(textAbilities, abilities)
 }
 
+async function getAbilitiesID(abilities){
+    const rawAbilitiesID = await fetch(`https://raw.githubusercontent.com/${repo}/abilities_id.h`)
+    const textAbilitiesID = await rawAbilitiesID.text()
+
+    return regexAbilitiesID(textAbilitiesID, abilities)
+}
+
 async function buildAbilitiesObj(){
     let abilities = {}
     abilities = await getAbilities(abilities) 
+    abilities = await getAbilitiesID(abilities) 
 
     await localStorage.setItem("abilities", LZString.compressToUTF16(JSON.stringify(abilities)))
     return abilities

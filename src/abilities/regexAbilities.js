@@ -11,6 +11,7 @@ function regexAbilities(textAbilities, abilities){
             if(abilities[ability] === undefined){
                 abilities[ability] = {}
                 abilities[ability]["name"] = ability
+                abilities[ability]["ID"] = 0
             }
             
 
@@ -48,6 +49,29 @@ function regexAbilities(textAbilities, abilities){
                         abilities[conversionTable[conversionDescription][j]]["description"] = description
                     }
                 }
+            }
+        }
+    }
+    return abilities
+}
+
+
+
+
+
+
+
+
+function regexAbilitiesID(textAbilitiesID, abilities){
+    const lines = textAbilitiesID.split("\n")
+
+    for(let i = lines.length - 1; i >= 0; i--){
+        let matchAbility = lines[i].match(/(ABILITY_\w+) *(\d+)/i)
+        if(matchAbility){
+            ability = matchAbility[1]
+            
+            if(ability in abilities){
+                abilities[ability]["ID"] = matchAbility[2]
             }
         }
     }

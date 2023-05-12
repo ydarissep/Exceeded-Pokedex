@@ -49,6 +49,41 @@ function regexMovesDescription(textMovesDescription, moves){
 }
 
 
+function regexMovesID(textMovesID, moves){
+    const lines = textMovesID.split("\n")
+    let defines = []
+
+    lines.forEach(line => {
+
+        for(let i = 0; i < defines.length; i++){
+            line = line.replace(defines[i][0], defines[i][1])
+        }
+
+        const matchDefine = line.match(/#define *(\w+)/i)
+        const matchID = line.match(/\d+/g)
+        let ID = 0
+        if(matchID){
+            for(let i = 0; i < matchID.length; i++){
+                ID += parseInt(matchID[i])
+            }
+        }
+        if(matchDefine && matchID){
+            const move = matchDefine[1]
+
+            if(move in moves){
+                moves[move]["ID"] = ID
+            }
+            else{
+                defines.push([move, ID])
+                console.log(defines)
+            }
+        }
+    })
+
+    return moves
+}
+
+
 function regexMoves(textMoves, moves){
     const lines = textMoves.split("\n")
     let move = null, change = false, rebalanced = false
@@ -61,6 +96,7 @@ function regexMoves(textMoves, moves){
             
             moves[move] = {}
             moves[move]["name"] = move
+            moves[move]["ID"] = 0
             moves[move]["changes"] = []
             moves[move]["description"] = []
             moves[move]["ingameName"] = sanitizeString(move)

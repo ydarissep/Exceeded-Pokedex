@@ -10,6 +10,11 @@ function appendMovesToTable(moveName){
 
     row.setAttribute("id", `${moveName}`)
 
+    let movesID = document.createElement("td")
+    movesID.className = "moveID"
+    movesID.innerText = moves[moveName]["ID"]
+    row.append(movesID)
+
     let nameContainer = document.createElement("td")
     let name = document.createElement("div")
     let ingameName = document.createElement("div")

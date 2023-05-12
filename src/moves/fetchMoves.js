@@ -14,12 +14,20 @@ async function getMovesDescription(Moves){
     return regexMovesDescription(textMovesDescription, Moves)
 }
 
+async function getMovesID(Moves){
+    const rawMovesID = await fetch(`https://raw.githubusercontent.com/${repo}/moves_id.h`)
+    const textMovesID = await rawMovesID.text()
+
+    return regexMovesID(textMovesID, Moves)
+}
+
 
 
 async function buildMovesObj(){
     let moves = {}
     moves = await getMoves(moves)
     moves = await getMovesDescription(moves)
+    moves = await getMovesID(moves)
 
     await localStorage.setItem("moves", LZString.compressToUTF16(JSON.stringify(moves)))
     return moves

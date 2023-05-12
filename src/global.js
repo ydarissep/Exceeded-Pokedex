@@ -57,9 +57,11 @@ const movesInputDataList = document.getElementById("movesInputDataList")
 
 const table = document.querySelector("#table")
 
+const headerAbilitiesID = document.querySelector("#abilitiesTableThead th.abilityID")
 const headerAbilitiesName = document.querySelector("#abilitiesTableThead th.ability")
 const headerAbilitiesDescription = document.querySelector("#abilitiesTableThead th.description")
 
+const headerMovesID = document.querySelector("#movesTableThead th.moveID")
 const headerMovesMove = document.querySelector("#movesTableThead th.move")
 const headerMovesType = document.querySelector("#movesTableThead th.type")
 const headerMovesSplit = document.querySelector("#movesTableThead th.split")
@@ -91,6 +93,12 @@ const utilityButton = document.querySelector('.utilityButton')
 
 
 
+headerAbilitiesID.addEventListener("click", () => {
+    if(headerAbilitiesID.classList.contains("th-sort-desc"))
+        sortTableByClassName(abilitiesTable, abilities, ["ID"], "abilityID", asc = true)
+    else
+        sortTableByClassName(abilitiesTable, abilities, ["ID"], "abilityID", asc = false)
+})
 headerAbilitiesName.addEventListener("click", () => {
     if(headerAbilitiesName.classList.contains("th-sort-desc"))
         sortTableByClassName(abilitiesTable, abilities, ["name"], "ability", asc = true)
@@ -109,6 +117,12 @@ headerAbilitiesDescription.addEventListener("click", () => {
 
 
 
+headerMovesID.addEventListener("click", () => {
+    if(headerMovesID.classList.contains("th-sort-desc"))
+        sortTableByClassName(movesTable, moves, ["ID"], "moveID", asc = true)
+    else
+        sortTableByClassName(movesTable, moves, ["ID"], "moveID", asc = false)
+})
 headerMovesMove.addEventListener("click", () => {
     if(headerMovesMove.classList.contains("th-sort-desc"))
         sortTableByClassName(movesTable, moves, ["name"], "move", asc = true)
