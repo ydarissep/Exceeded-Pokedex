@@ -96,6 +96,9 @@ function returnMethodSprite(method){
     else if(method.match(/shard/i)){
         return "Egg"
     }
+    else if(method.match(/headbutt/i)){
+        return "Headbutt"
+    }
     else if(method.match(/sprouted|taller|flowering|berries/i)){
         return "Berry"
     }
