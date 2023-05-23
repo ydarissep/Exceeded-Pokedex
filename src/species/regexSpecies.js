@@ -133,7 +133,7 @@ function regexBaseStats(textBaseStats, species){
 function regexChanges(textChanges, species){
     const lines = textChanges.split("\n")
 
-    const regex = /baseHP|baseAttack|baseDefense|baseSpeed|baseSpAttack|baseSpDefense|types|abilities/i
+    const regex = /baseHP|baseAttack|baseDefense|baseSpeed|baseSpAttack|baseSpDefense|types/i
     let stop = false, value, name, buildDefines = true, defines = {}, define = "", keep = false, argument = [], argumentDefine = []
 
     for(let i = 0; i < lines.length; i++){
