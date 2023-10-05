@@ -587,8 +587,11 @@ function regexSprite(textSprite, conversionTable, species){
                 const matchPath = line.match(/graphics\/pokemon\/(\w+\/\w+\/\w+\/\w+\/\w+|\w+\/\w+\/\w+\/\w+|\w+\/\w+\/\w+|\w+\/\w+|\w+)\//i) // ¯\_(ツ)_/¯
                 if(matchPath){
                     const path = matchPath[1]
-                    const url = `https://raw.githubusercontent.com/${repo}/graphics/pokemon/${path}/front.png`
+                    let url = `https://raw.githubusercontent.com/${repo}/graphics/pokemon/${path}/front.png`
                     for(let i = 0; i < conversionTable[conversion].length; i++){
+                        if(speciesArray[i].includes("SPECIES_THU_FI_ZER")){
+                            url = url.replace(/front.png$/i, "anim_front.png")
+                        }
                         species[speciesArray[i]]["sprite"] = url
                     }
                 }
