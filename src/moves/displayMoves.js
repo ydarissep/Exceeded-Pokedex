@@ -82,7 +82,7 @@ function appendMovesToTable(moveName){
     descriptionContainer.className = "description"
     for(let j = 0; j < moves[moveName]["description"].length; j++){
         let description = document.createElement("div")
-        description.innerText += moves[moveName]["description"][j].replace(/\\n/g, " ").replace(/\\/g, "")
+        description.innerText += moves[moveName]["description"][j]
         descriptionContainer.append(description)
     }
 
@@ -105,6 +105,7 @@ function appendMovesToTable(moveName){
 
     row.append(effectContainer)
 
+    /*
     row.addEventListener("click", async() => {
         if(!speciesButton.classList.contains("activeButton")){
             tracker = speciesTracker
@@ -113,10 +114,16 @@ function appendMovesToTable(moveName){
         window.scrollTo({ top: 0})
         deleteFiltersFromTable()
         createFilter(moves[moveName]["ingameName"], "Move")
+    })
+    */
+    row.addEventListener('click', function () {
+        createPopupForMove(moves[moveName])
+        overlay.style.display = 'block'
     }) 
 
     tBody.append(row)
 }
+
 
 
 function createInputContainer(headerText, input, moveObj){
@@ -141,4 +148,61 @@ function createInputContainer(headerText, input, moveObj){
     inputContainer.className = `${input}Container`
 
     return inputContainer
+}
+
+
+
+
+
+
+function createPopupForMove(move){
+    while(popup.firstChild){
+        popup.removeChild(popup.firstChild)
+    }
+
+    const moveName = document.createElement("h2"); moveName.classList.add("bold"); moveName.innerText = move["ingameName"]
+    popup.append(moveName)
+
+    const flagsContainer = document.createElement("div")
+    const flagsListContainer = document.createElement("ul")
+    for(let i = 0; i < move["flags"].length; i++){
+        if(move["flags"][i] !== ""){
+            const flagName = document.createElement("li"); flagName.innerText = sanitizeString(move["flags"][i]); flagName.classList.add("hyperlink")
+            flagsListContainer.append(flagName)
+
+
+            flagName.addEventListener("click", async() => {
+                if(!movesButton.classList.contains("activeButton")){
+                    tracker = movesTracker
+                    await tableButtonClick("moves")
+                }
+                deleteFiltersFromTable()
+                createFilter(sanitizeString(move["flags"][i]), "Flag")
+                overlay.style.display = 'none'
+                speciesPanel("hide")
+                window.scrollTo({ top: 0})
+            })
+        }
+    }
+
+    const filterButton = document.createElement("button"); filterButton.classList.add("popupFilterButton")
+    filterButton.innerText = "FILTER"
+
+    filterButton.addEventListener("click", async() => {
+        if(!speciesButton.classList.contains("activeButton")){
+            tracker = speciesTracker
+            await tableButtonClick("species")
+        }
+        overlay.style.display = 'none'
+        speciesPanel("hide")
+        deleteFiltersFromTable()
+        createFilter(move["ingameName"], "Move")
+        window.scrollTo({ top: 0})
+    })
+
+    if(flagsListContainer.childElementCount > 0){
+        flagsContainer.append(flagsListContainer)
+    }
+    popup.append(flagsContainer)
+    popup.append(filterButton)
 }

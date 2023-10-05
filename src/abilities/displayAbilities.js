@@ -3,7 +3,7 @@ function appendAbilitiesToTable(abilitiesName){
     if(!abilities[abilitiesName]["description"] || !/[1-9aA-zZ]/.test(abilities[abilitiesName]["ingameName"])){
         return
     }
-
+    
     let tBody = abilitiesTableTbody
 
     let row = document.createElement("tr")
