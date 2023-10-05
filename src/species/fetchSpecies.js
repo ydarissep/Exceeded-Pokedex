@@ -122,28 +122,6 @@ async function buildSpeciesObj(){
             if(!species[name]["tutorLearnsets"].includes("MOVE_DRACO_METEOR"))
                 species[name]["tutorLearnsets"].push("MOVE_DRACO_METEOR")
         }
-        species[name]["TMHMLearnsets"].sort(function(a,b) {
-            a = parseInt(a[1].match(/\d+/)[0])
-            b = parseInt(b[1].match(/\d+/)[0])
-
-            return a - b
-        })
-        species[name]["TMHMLearnsets"].sort(function(a,b) {
-            if(a[1].includes("TM")){
-                a = 1
-            }
-            else{
-                a = 2
-            }
-            if(b[1].includes("TM")){
-                b = 1
-            }
-            else{
-                b = 2
-            }
-
-            return a - b
-        })
     })
     await localStorage.setItem("species", LZString.compressToUTF16(JSON.stringify(species)))
     return species
