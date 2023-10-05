@@ -409,7 +409,7 @@ function regexTMHMLearnsets(textTMHMLearnsets, conversionTable, species){
 
 
             for(let i = 0; i < speciesArray.length; i++)
-                species[speciesArray[i]]["TMHMLearnsets"].push([move, TMHM])
+                species[speciesArray[i]]["TMHMLearnsets"].push(move)
         }
     })
     return altFormsLearnsets(species, "forms", "TMHMLearnsets")
