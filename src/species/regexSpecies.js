@@ -234,9 +234,15 @@ function regexChanges(textChanges, species){
 
 
                 if(match === "baseHP" || match === "baseAttack" || match === "baseDefense" || match === "baseSpeed" || match === "baseSpAttack" || match === "baseSpDefense"){
-                    const matchInt = line.match(/\d+/)
-                    if(matchInt)
-                        value = parseInt(matchInt[0])
+                    const matchInt = line.match(/\d+/g)
+                    if(matchInt){
+                        if(matchInt.length > 1){
+                            value = parseInt(matchInt[1])
+                        }
+                        else{
+                            value = parseInt(matchInt[0])
+                        }
+                    }
                 }
                 else if(match === "types"){
                     value = line.match(/TYPE_\w+/ig)
