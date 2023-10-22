@@ -1,17 +1,20 @@
 async function getScripts(trainers){
     footerP("Fetching trainers")
-    const rawScripts = await fetch(`https://raw.githubusercontent.com/${repo}/data/event_scripts.s`)
+    const rawScripts = await fetch(`https://raw.githubusercontent.com/${repo}/event_scripts.s`)
     const textScripts = await rawScripts.text()
 
     return await regexScripts(textScripts, trainers)   
 }
 
 async function getTrainers(trainers){
-    const rawTrainers = await fetch(`https://raw.githubusercontent.com/${repo}/src/data/trainers.h`)
+    const rawTrainers = await fetch(`https://raw.githubusercontent.com/${repo}/trainers/trainers.h`)
     const textTrainers = await rawTrainers.text()
 
-    const rawTrainersParties = await fetch(`https://raw.githubusercontent.com/${repo}/src/data/trainer_parties.h`)
-    const textTrainersParties = await rawTrainersParties.text()
+    const rawTrainersParties = await fetch(`https://raw.githubusercontent.com/${repo}/trainers/trainer_parties.h`)
+    let textTrainersParties = await rawTrainersParties.text()
+
+    const rawTrainersHard = await fetch(`https://raw.githubusercontent.com/${repo}/trainers/trainer_parties_hard.h`)
+    textTrainersParties = textTrainersParties.concat(await rawTrainersHard.text())
 
     return await regexTrainersParties(textTrainersParties, await regexTrainers(textTrainers, trainers))
 }
@@ -19,8 +22,8 @@ async function getTrainers(trainers){
 async function buildTrainersObj(){
     let trainers = {}
 
-    //trainers = await getScripts(trainers)
-    //trainers = await getTrainers(trainers)
+    trainers = await getScripts(trainers)
+    trainers = await getTrainers(trainers)
     
     trainers = await bugFixTrainers(trainers)
 
@@ -65,7 +68,7 @@ async function fetchTrainersObj(){
                 sprites[sprite] = LZString.decompressFromUTF16(localStorage.getItem(sprite))
                 if(sprites[sprite].length < 500){
                     localStorage.removeItem(sprite)
-                    spriteRemoveBgReturnBase64(sprite, `https://raw.githubusercontent.com/${repo}/graphics/trainers/front_pics/${sprite.replace(/^TRAINER_PIC_/, "").toLowerCase()}_front_pic.png`)
+                    spriteRemoveBgReturnBase64(sprite)
                 }
             }
         })
@@ -74,6 +77,26 @@ async function fetchTrainersObj(){
 
 
 
+
+
+
+function getTrainerSpriteSrc(trainerSprite){
+    const url = `https://raw.githubusercontent.com/${repo}/trainers/front_pics/${trainerSprite.replace(/^TRAINER_PIC_/, "").toLowerCase()}_front_pic.png`
+    if(sprites[trainerSprite]){
+        if(sprites[trainerSprite].length < 500){
+            localStorage.removeItem(trainerSprite)
+            spriteRemoveTrainerBgReturnBase64(trainerSprite, url)
+            return url
+        }
+        else{
+            return sprites[trainerSprite]
+        }
+    }
+    else{
+        spriteRemoveTrainerBgReturnBase64(trainerSprite, url)
+        return url
+    }
+}
 
 
 

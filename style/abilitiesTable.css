@@ -1,24 +1,5 @@
-#abilitiesButton {
-	width: 100px;
-}
-
-#abilitiesTableThead th.abilityID {
-	width: 40px;
-}
-
-#abilitiesTableThead th.ability {
-	width: 250px;
-}
+@import url(https://ydarissep.github.io/dex-core/style/abilitiesTable.css);
 
 #abilitiesTableThead th.description {
-	width: 1000px;
-}
-
-#abilitiesFilterButton {
-	padding-bottom: 5px;
-}
-
-#abilitiesTableTbody .description {
-	font-size: min(max(1vmax, 11px), 16px) !important;
-	padding: 15px;
+	width: 1000px !important;
 }
