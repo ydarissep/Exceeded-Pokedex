@@ -1,1 +1,5 @@
 @import url(https://ydarissep.github.io/dex-core/style/speciesPanel.css);
+
+.speciesPanelAbilitiesDescriptionPadding {
+    font-size: 15px;
+}
