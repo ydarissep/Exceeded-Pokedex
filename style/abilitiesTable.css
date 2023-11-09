@@ -1,5 +1,9 @@
 @import url(https://ydarissep.github.io/dex-core/style/abilitiesTable.css);
 
 #abilitiesTableThead th.description {
-	width: 1000px !important;
+	width: 800px !important;
+}
+
+#abilitiesTableTbody .description {
+	font-size: 17px;
 }
