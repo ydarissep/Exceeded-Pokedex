@@ -43,166 +43,75 @@ function regexSpecies(textSpecies, species){
 
 
 function regexBaseStats(textBaseStats, species){
-    let lines = textBaseStats.split("\n")
+    const lines = textBaseStats.split("\n")
 
-    const regex = /baseHP|baseAttack|baseDefense|baseSpeed|baseSpAttack|baseSpDefense|types|itemCommon|itemRare|eggGroups|abilities|catchRate/
-    let stop = false, value, name, defines = {}, define = "", keep = false, argument = [], argumentDefine = []
+    const regex = /baseHP|baseAttack|baseDefense|baseSpeed|baseSpAttack|baseSpDefense|type1|type2|item1|item2|eggGroup1|eggGroup2|abilities|innates/i
+    let stop = false, value, name
 
-    mainLoop: for(let i = 0; i < lines.length; i++){
-        const line = lines[i].trim()
+    lines.forEach(line => {
 
         if(/#else/i.test(line))
                 stop = true
         if(/#endif/i.test(line))
                 stop = false
 
-        if(!stop){
-            if(/#define/.test(line) || keep){
-                const matchDefine = line.match(/#define (.*)/i)
-                if(matchDefine){
-                    if(!/\\/.test(line)){
-                        Object.keys(defines).forEach(testDefine => {
-                            const tempDefine = testDefine.match(/(\w+)/)
-                            if(tempDefine[1] && line.includes(tempDefine[1])){
-                                define = matchDefine[1].replace(testDefine, "").trim()
-                                defines[define] = defines[testDefine]
-                            }
-                        })
+
+        const matchSpecies = line.match(/SPECIES_\w+/i)
+        if(matchSpecies){
+            name = matchSpecies[0]
+            change = false
+        }
+
+
+        const matchRegex = line.match(regex)
+        if(matchRegex){
+            const match = matchRegex[0]
+
+
+
+            if(match === "baseHP" || match === "baseAttack" || match === "baseDefense" || match === "baseSpeed" || match === "baseSpAttack" || match === "baseSpDefense"){
+                const matchInt = line.match(/\d+/)
+                if(matchInt)
+                    value = parseInt(matchInt[0])
+            }
+            else if(match === "type1" || match === "type2" || match === "item1" || match === "item2" || match === "eggGroup1" || match === "eggGroup2"){
+                value = line.match(/\w+_\w+/i)
+                if(value)
+                    value = value[0]
+            }
+            else if(match === "abilities"){
+                value = line.match(/ABILITY_\w+/ig)
+                if(value){
+                    for (let i = 0; i < 3; i++){
+                        if(value[i] === "ABILITY_NONE" || value[i] === undefined && i >= 1)
+                            value[i] = value[i-1]
                     }
-                    else{
-                        define = matchDefine[1].replaceAll("\\", "").trim()
-                        defines[define] = []
-                    }
-                }
-                else if(keep && define in defines){
-                    defines[define].push(line)
-                }
-                if(/\\/.test(line)){
-                    keep = true
-                }
-                else{
-                    keep = false
                 }
             }
-            else{
-                const matchSpecies = line.match(/\[(SPECIES_\w+)\] *=(.*)/i)
-                if(matchSpecies){
-                    name = matchSpecies[1]
-                    stop = false
-                    argument = []
-                    argumentDefine = []
-
-                    if(matchSpecies[2]){
-                        matchDefine = matchSpecies[2].replaceAll(",", "").trim().match(/(\w+)(.*)/)
-                        define = matchDefine[1]
-                        if(matchDefine[2]){
-                            argument = matchDefine[2].match(/\w+/g)
-                        }
-                        Object.keys(defines).forEach(testDefine => {
-                            testDefine = testDefine.match(/(\w+)(.*)/)
-                            if(testDefine[1] && testDefine[1] === define){
-                                define = testDefine[0]
-                                if(testDefine[2]){
-                                    argumentDefine = testDefine[2].match(/\w+/g)
-                                }
-                            }
-                        })
-                        if(define in defines){
-                            for(let j = 0; j < defines[define].length; j++){
-                                let newLine = defines[define][j].replaceAll(" ", "").replaceAll("}", ",")
-                                if(argument){
-                                    for(let k = 0; k < argument.length; k++){
-                                        newLine = newLine.replace(`${argumentDefine[k]},`, `${argument[k]},`)
-                                    }
-                                }
-                                lines.splice(i+1, 0, newLine)
-                            }
-                        }
-                    }
-                }
-
-                if(/^\w+/.test(line.trim())){
-                    define = ""
-                    Object.keys(defines).forEach(testDefine => {
-                        const tempDefine = testDefine.match(/(\w+)/)
-                        if(tempDefine[1] && line.includes(tempDefine[1])){
-                            define = testDefine
+            else if(match === "innates")
+            {
+                let innates = []
+                value = line.match(/ABILITY_\w+/ig)
+                if(value){
+                    value.forEach(innate => {
+                        if(innate != "ABILITY_NONE"){
+                            innates.push(innate)
                         }
                     })
-                    if(define in defines){
-                        for(let j = 0; j < defines[define].length; j++){
-                            lines.splice(i+1, 0, defines[define][j])
-                        }
-                    }
-                }
-
-
-                    const matchRegex = line.match(regex)
-
-                    if(matchRegex){
-                        let match = matchRegex[0]
-
-
-
-                    if(match === "baseHP" || match === "baseAttack" || match === "baseDefense" || match === "baseSpeed" || match === "baseSpAttack" || match === "baseSpDefense" || match === "catchRate"){
-                        const matchInt = line.match(/\d+/)
-                        if(matchInt)
-                            value = parseInt(matchInt[0])
-                    }
-                    else if(match === "itemCommon" || match === "itemRare" || match === "eggGroup1" || match === "eggGroup2"){
-                        value = line.match(/\w+_\w+/i)
-                        if(value)
-                            value = value[0]
-                    }
-                    else if(match === "types"){
-                        if(!stop){
-                            value = line.match(/TYPE_\w+/ig)
-                            if(value[0]){
-                                species[name]["type1"] = value[0]
-                            }
-                            if(value[1]){
-                                species[name]["type2"] = value[1]
-                            }
-                        }
-                        continue mainLoop
-                    }
-                    else if(match === "eggGroups"){
-                        if(!stop){
-                            value = line.match(/EGG_GROUP_\w+/ig)
-                            if(value[0]){
-                                species[name]["eggGroup1"] = value[0]
-                            }
-                            if(value[1]){
-                                species[name]["eggGroup2"] = value[1]
-                            }
-                        }
-                        continue mainLoop
-                    }
-                    else if(match === "abilities"){
-                        value = line.match(/ABILITY_\w+/ig)
-                        if(value){
-                            for (let i = 0; i < 3; i++){
-                                if(value[i] === "ABILITY_NONE" || value[i] === undefined && i >= 1)
-                                    value[i] = value[i-1]
-                            }
-                        }
-                    }
-
-                    if(!stop){
-                        if(match === "itemCommon"){
-                            match = "item1"
-                        }
-                        else if(match === "itemRare"){
-                            match = "item2"   
-                        }
-                        species[name][match] = value
-                    }
+                    value = innates
                 }
             }
+
+
+
+            if(!stop){
+                species[name][match] = value
+            }
         }
-    }
+    })
     return getBST(species)
 }
+
 
 
 
@@ -387,7 +296,6 @@ function regexChanges(textChanges, species){
 
 
 
-
 function getLevelUpLearnsetsConversionTable(textLevelUpLearnsetsPointers){
     const lines = textLevelUpLearnsetsPointers.split("\n")
     let conversionTable = {}
@@ -427,11 +335,12 @@ function regexLevelUpLearnsets(textLevelUpLearnsets, conversionTable, species){
 
 
         const matchLevelMove = line.match(/(\d+) *, *(MOVE_\w+)/i)
-        if(matchLevelMove && speciesArray){
+        if(matchLevelMove){
             const level = parseInt(matchLevelMove[1])
             const move = matchLevelMove[2]
-            for(let i = 0; i < speciesArray.length; i++){
-                if(move in moves)
+            if(speciesArray)
+            {
+                for(let i = 0; i < speciesArray.length; i++)
                     species[speciesArray[i]]["levelUpLearnsets"].push([move, level])
             }
         }
@@ -448,13 +357,8 @@ function regexLevelUpLearnsets(textLevelUpLearnsets, conversionTable, species){
 
 
 
-
-
-
-
-
-function getTeachableLearnsetsConversionTable(textTeachableLearnsetsPointers){
-    const lines = textTeachableLearnsetsPointers.split("\n")
+function getTMHMLearnsetsConversionTable(textTMHMLearnsetsPointers){
+    const lines = textTMHMLearnsetsPointers.split("\n")
     let conversionTable = {}
 
     lines.forEach(line => {
@@ -464,7 +368,7 @@ function getTeachableLearnsetsConversionTable(textTeachableLearnsetsPointers){
             const value = matchSpecies[0]
 
 
-            const matchConversion = line.match(/s\w+TeachableLearnset/i)
+            const matchConversion = line.match(/s\w+TMHMLearnset/i)
             if(matchConversion){
                 const index = matchConversion[0]
 
@@ -479,40 +383,40 @@ function getTeachableLearnsetsConversionTable(textTeachableLearnsetsPointers){
     return conversionTable
 }
 
-function regexTeachableLearnsets(textTeachableLearnsets, conversionTable, species){
-    const lines = textTeachableLearnsets.split("\n")
+
+
+function regexTMHMLearnsets(textTMHMLearnsets, conversionTable, species){
+    const lines = textTMHMLearnsets.split("\n")
     let speciesArray = []
 
     lines.forEach(line => {
-        const matchConversion = line.match(/s\w+TeachableLearnset/i)
+        const matchConversion = line.match(/s\w+TMHMLearnset/i)
         if(matchConversion){
             const index = matchConversion[0]
-            speciesArray = conversionTable[index]
-        }
-
-
-        const matchMove = line.match(/MOVE_\w+/i)
-        if(matchMove && speciesArray){
-            const move = matchMove[0]
-            for(let i = 0; i < speciesArray.length; i++){
-                if(move in moves){
-                    species[speciesArray[i]]["TMHMLearnsets"].push(move)
-                    species[speciesArray[i]]["tutorLearnsets"].push(move)
-                }
+            if(index in conversionTable){
+                speciesArray = conversionTable[index]
             }
         }
+
+
+        const matchTmhmMove = line.match(/TMHM\d* *\((\w+ *\d+) *_ *(\w+)/i)
+        if(matchTmhmMove){
+            const TMHM = matchTmhmMove[1]
+            let move = matchTmhmMove[2]
+            if(move === "SOLARBEAM")
+                move = "SOLAR_BEAM"
+            else if(move === "SWAMPY_TERRAIN"){
+                move = "SWAMP_TERRAIN"
+            }
+            move = `MOVE_${move}`
+
+
+            for(let i = 0; i < speciesArray.length; i++)
+                species[speciesArray[i]]["TMHMLearnsets"].push(move)
+        }
     })
-    return species
+    return altFormsLearnsets(species, "forms", "TMHMLearnsets")
 }
-
-
-
-
-
-
-
-
-
 
 
 
@@ -584,7 +488,6 @@ async function getEvolutionLine(species){
 
 
 
-
 function regexForms(textForms, species){
     const lines = textForms.split("\n")
     let speciesArray = []
@@ -623,7 +526,7 @@ function regexEggMovesLearnsets(textEggMoves, species){
         const matchMove = line.match(/MOVE_\w+/i)
         if(matchMove){
             const move = matchMove[0]
-            if(name && move in moves)
+            if(name)
                 species[name]["eggMovesLearnsets"].push(move)
         }
         else if(name === null){
@@ -704,6 +607,73 @@ function regexSprite(textSprite, conversionTable, species){
     })
     return species
 }
+
+
+
+
+
+
+
+
+
+
+
+
+function getTutorLearnsetsConversionTable(textTutorLearnsetsPointers){
+    const lines = textTutorLearnsetsPointers.split("\n")
+    let conversionTable = {}
+
+    lines.forEach(line => {
+
+        const matchSpecies = line.match(/SPECIES_\w+/i)
+        if(matchSpecies){
+            const value = matchSpecies[0]
+
+
+            const matchConversion = line.match(/s\w+TutorLearnset/i)
+            if(matchConversion){
+                const index = matchConversion[0]
+
+
+                if(conversionTable[index] === undefined) // DO NOT TOUCH THAT FUTURE ME, THIS IS THE WAY, DON'T QUESTION ME
+                    conversionTable[index] = [value]
+                else // DO NOT TOUCH THAT FUTURE ME, THIS IS THE WAY, DON'T QUESTION ME
+                    conversionTable[index].push(value)
+            }
+        }
+    })
+    return conversionTable
+}
+
+
+
+function regexTutorLearnsets(textTutorLearnsets, conversionTable, species){
+    const lines = textTutorLearnsets.split("\n")
+    let speciesArray = []
+
+    lines.forEach(line => {
+        const matchConversion = line.match(/s\w+TutorLearnset/i)
+        if(matchConversion){
+            const index = matchConversion[0]
+            if(index in conversionTable){
+                speciesArray = conversionTable[index]
+            }
+        }
+
+
+        const matchTutorMove = line.match(/TUTOR *\( *(\w+) *\)/i)
+        if(matchTutorMove){
+            let move = matchTutorMove[1]
+            move = `MOVE_${move}`
+
+            for(let i = 0; i < speciesArray.length; i++){
+                species[speciesArray[i]]["tutorLearnsets"].push(move)
+            }
+        }
+    })
+    return altFormsLearnsets(species, "forms", "tutorLearnsets")
+}
+
 
 
 
