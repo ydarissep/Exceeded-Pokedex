@@ -1,6 +1,6 @@
 async function getSpecies(species){
     footerP("Fetching species")
-    const rawSpecies = await fetch(`https://raw.githubusercontent.com/${repo}/species.h`)
+    const rawSpecies = await fetch(`https://raw.githubusercontent.com/${repo}/include/constants/species.h`)
     const textSpecies = await rawSpecies.text()
 
     return regexSpecies(textSpecies, species)
@@ -9,17 +9,17 @@ async function getSpecies(species){
 
 async function getBaseStats(species){
     footerP("Fetching base stats")
-    const rawBaseStats = await fetch(`https://raw.githubusercontent.com/${repo}/base_stats.h`)
+    const rawBaseStats = await fetch(`https://raw.githubusercontent.com/${repo}/src/data/pokemon/species_info.h`)
     const textBaseStats = await rawBaseStats.text()
     return regexBaseStats(textBaseStats, species)
 }
 
 async function getLevelUpLearnsets(species){
     footerP("Fetching level up learnsets")
-    const rawLevelUpLearnsets = await fetch(`https://raw.githubusercontent.com/${repo}/level_up_learnsets.h`)
+    const rawLevelUpLearnsets = await fetch(`https://raw.githubusercontent.com/${repo}/src/data/pokemon/level_up_learnsets.h`)
     const textLevelUpLearnsets = await rawLevelUpLearnsets.text()
 
-    const rawLevelUpLearnsetsPointers = await fetch(`https://raw.githubusercontent.com/${repo}/level_up_learnset_pointers.h`)
+    const rawLevelUpLearnsetsPointers = await fetch(`https://raw.githubusercontent.com/${repo}/src/data/pokemon/level_up_learnset_pointers.h`)
     const textLevelUpLearnsetsPointers = await rawLevelUpLearnsetsPointers.text()
 
 
@@ -29,19 +29,24 @@ async function getLevelUpLearnsets(species){
     return regexLevelUpLearnsets(textLevelUpLearnsets, levelUpLearnsetsConversionTable, species)
 }
 
-async function getTMHMLearnsets(species){
-    footerP("Fetching TMHM learnsets")
-    const rawTMHMLearnsets = await fetch(`https://raw.githubusercontent.com/${repo}/tmhm_learnsets.h`)
-    const textTMHMLearnsets = await rawTMHMLearnsets.text()
+async function getTeachableLearnsets(species){
+    footerP("Fetching TMHM/Tutor learnsets")
+    const rawTeachableLearnsets = await fetch(`https://raw.githubusercontent.com/${repo}/src/data/pokemon/teachable_learnsets.h`)
+    const textTeachableLearnsets = await rawTeachableLearnsets.text()
 
-    const TMHMLearnsetsConversionTable = getTMHMLearnsetsConversionTable(textTMHMLearnsets)
+    const rawTeachableLearnsetsPointers = await fetch(`https://raw.githubusercontent.com/${repo}/src/data/pokemon/teachable_learnset_pointers.h`)
+    const textTeachableLearnsetsPointers = await rawTeachableLearnsetsPointers.text()
 
-    return regexTMHMLearnsets(textTMHMLearnsets, TMHMLearnsetsConversionTable, species)
+
+    const teachableLearnsetsConversionTable = getTeachableLearnsetsConversionTable(textTeachableLearnsetsPointers)
+
+
+    return regexTeachableLearnsets(textTeachableLearnsets, teachableLearnsetsConversionTable, species)
 }
 
 async function getEvolution(species){
     footerP("Fetching evolution line")
-    const rawEvolution = await fetch(`https://raw.githubusercontent.com/${repo}/evolution.h`)
+    const rawEvolution = await fetch(`https://raw.githubusercontent.com/${repo}/src/data/pokemon/evolution.h`)
     const textEvolution = await rawEvolution.text()
 
     return regexEvolution(textEvolution, species)
@@ -49,7 +54,7 @@ async function getEvolution(species){
 
 async function getForms(species){
     footerP("Fetching alternate forms")
-    const rawForms = await fetch(`https://raw.githubusercontent.com/${repo}/form_species_tables.h`)
+    const rawForms = await fetch(`https://raw.githubusercontent.com/${repo}/src/data/pokemon/form_species_tables.h`)
     const textForms = await rawForms.text()
 
     return regexForms(textForms, species)
@@ -57,28 +62,18 @@ async function getForms(species){
 
 async function getEggMovesLearnsets(species){
     footerP("Fetching egg moves learnsets")
-    const rawEggMoves = await fetch(`https://raw.githubusercontent.com/${repo}/egg_moves.h`)
+    const rawEggMoves = await fetch(`https://raw.githubusercontent.com/${repo}/src/data/pokemon/egg_moves.h`)
     const textEggMoves = await rawEggMoves.text()
 
     return regexEggMovesLearnsets(textEggMoves, species)
 }
 
-async function getTutorLearnsets(species){
-    footerP("Fetching tutor learnsets")
-    const rawTutorLearnsets = await fetch(`https://raw.githubusercontent.com/${repo}/tutor_learnsets.h`)
-    const textTutorLearnsets = await rawTutorLearnsets.text()
-
-    const tutorLearnsetsConversionTable = getTutorLearnsetsConversionTable(textTutorLearnsets)
-
-    return regexTutorLearnsets(textTutorLearnsets, tutorLearnsetsConversionTable, species)
-}
-
 async function getSprite(species){
     footerP("Fetching sprites")
-    const rawFrontPicTable = await fetch(`https://raw.githubusercontent.com/${repo}/front_pic_table.h`)
+    const rawFrontPicTable = await fetch(`https://raw.githubusercontent.com/${repo}/src/data/pokemon_graphics/front_pic_table.h`)
     const textFrontPicTable = await rawFrontPicTable.text()
 
-    const rawSprite = await fetch(`https://raw.githubusercontent.com/${repo}/pokemon.h`)
+    const rawSprite = await fetch(`https://raw.githubusercontent.com/${repo}/src/data/graphics/pokemon.h`)
     const textSprite = await rawSprite.text()
 
     const spriteConversionTable = getSpriteConversionTable(textFrontPicTable, species)
@@ -108,21 +103,10 @@ async function buildSpeciesObj(){
     species = await getBaseStats(species)
     species = await getChanges(species, "https://raw.githubusercontent.com/rh-hideout/pokeemerald-expansion/master/src/data/pokemon/species_info.h")
     species = await getLevelUpLearnsets(species)
-    species = await getTMHMLearnsets(species)
+    species = await getTeachableLearnsets(species)
     species = await getEggMovesLearnsets(species)
-    species = await getTutorLearnsets(species)
     species = await getSprite(species)
 
-    Object.keys(species).forEach(name => {
-        if(species[name]["type1"] === "TYPE_FIRE" || species[name]["type2"] === "TYPE_FIRE"){
-            if(!species[name]["tutorLearnsets"].includes("MOVE_BURN_UP"))
-                species[name]["tutorLearnsets"].push("MOVE_BURN_UP")
-        }
-        if(species[name]["type1"] === "TYPE_DRAGON" || species[name]["type2"] === "TYPE_DRAGON"){
-            if(!species[name]["tutorLearnsets"].includes("MOVE_DRACO_METEOR"))
-                species[name]["tutorLearnsets"].push("MOVE_DRACO_METEOR")
-        }
-    })
     await localStorage.setItem("species", LZString.compressToUTF16(JSON.stringify(species)))
     return species
 }
@@ -139,7 +123,6 @@ function initializeSpeciesObj(species){
         species[name]["baseSpeed"] = 0
         species[name]["BST"] = 0
         species[name]["abilities"] = []
-        species[name]["innates"] = []
         species[name]["type1"] = ""
         species[name]["type2"] = ""
         species[name]["item1"] = ""
@@ -155,6 +138,7 @@ function initializeSpeciesObj(species){
         species[name]["evolutionLine"] = [name]
         species[name]["forms"] = []
         species[name]["sprite"] = ""
+        species[name]["catchRate"] = 0
     }
     return species
 }
@@ -187,4 +171,3 @@ async function fetchSpeciesObj(){
 
     tracker = speciesTracker
 }
-
