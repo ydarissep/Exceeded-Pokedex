@@ -135,7 +135,7 @@ function regexBaseStats(textBaseStats, species){
 function regexChanges(textChanges, species){
     const lines = textChanges.split("\n")
 
-    const regex = /baseHP|baseAttack|baseDefense|baseSpeed|baseSpAttack|baseSpDefense|types|abilities/i
+    const regex = /baseHP|baseAttack|baseDefense|baseSpeed|baseSpAttack|baseSpDefense|types/i
     let stop = false, value, name, defines = {}, define = "", keep = false, argument = [], argumentDefine = []
 
     for(let i = 0; i < lines.length; i++){
@@ -236,9 +236,15 @@ function regexChanges(textChanges, species){
 
 
                     if(match === "baseHP" || match === "baseAttack" || match === "baseDefense" || match === "baseSpeed" || match === "baseSpAttack" || match === "baseSpDefense"){
-                        const matchInt = line.match(/\d+/)
-                        if(matchInt)
-                            value = parseInt(matchInt[0])
+                        const matchInt = line.match(/\d+/g)
+                        if(matchInt){
+                            if(matchInt.length > 1){
+                                value = parseInt(matchInt[1])
+                            }
+                            else{
+                                value = parseInt(matchInt[0])
+                            }
+                        }
                     }
                     else if(match === "types"){
                         value = line.match(/TYPE_\w+/ig)
@@ -250,15 +256,6 @@ function regexChanges(textChanges, species){
                         if(typeof value[1] !== 'undefined' && name in species){
                             if(value[1] !== species[name]["type2"]){
                                 species[name]["changes"].push(["type2", value[1]])
-                            }
-                        }
-                    }
-                    else if(match === "abilities"){
-                        value = line.match(/ABILITY_\w+/ig)
-                        if(value){
-                            for (let i = 0; i < 3; i++){
-                                if(value[i] === "ABILITY_NONE" || value[i] === undefined && i >= 1)
-                                    value[i] = value[i-1]
                             }
                         }
                     }
