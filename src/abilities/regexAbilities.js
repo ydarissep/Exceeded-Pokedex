@@ -64,16 +64,36 @@ function regexAbilities(textAbilities, abilities){
 
 function regexAbilitiesID(textAbilitiesID, abilities){
     const lines = textAbilitiesID.split("\n")
+    let customAbilitiesStart = null, ID = 0
 
-    for(let i = lines.length - 1; i >= 0; i--){
-        let matchAbility = lines[i].match(/(ABILITY_\w+) *(\d+)/i)
+    lines.forEach(line => {
+
+        if (/ABILITIES_COUNT_CUSTOM/i.test(line) && !customAbilitiesStart){
+            customAbilitiesStart = ID
+        }
+
+        const matchAbility = line.match(/#define *(ABILITY_\w+)/i)
         if(matchAbility){
-            ability = matchAbility[1]
-            
-            if(ability in abilities){
-                abilities[ability]["ID"] = matchAbility[2]
+            const name = matchAbility[1]
+
+
+            matchInt = line.match(/\d+/g)
+            if(matchInt){
+                ID = parseInt(matchInt[matchInt.length-1])
+            }
+            else{
+                ID++
+            }
+
+            if(name in abilities){
+                if(Number.isInteger(customAbilitiesStart)){
+                    abilities[name]["ID"] = ID+customAbilitiesStart
+                }
+                else{
+                    abilities[name]["ID"] = ID
+                }
             }
         }
-    }
+    })
     return abilities
 }

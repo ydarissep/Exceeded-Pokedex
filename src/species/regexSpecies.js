@@ -1,6 +1,6 @@
 function regexSpecies(textSpecies, species){
     const lines = textSpecies.split("\n")
-    let formsStart = null, ID = 0
+    let formsStart = null, ID = 0, conversionTable = []
 
     lines.forEach(line => {
 
@@ -13,24 +13,35 @@ function regexSpecies(textSpecies, species){
             const name = matchSpecies[1]
 
 
-            matchInt = line.match(/\d+/g)
-            if(matchInt){
-                ID = parseInt(matchInt[matchInt.length-1])
+            const matchSpeciesID = line.trim().match(/SPECIES_\w+$/i)
+            if(matchSpeciesID){
+                conversionTable[name] = matchSpeciesID[0]
+                ID = null
             }
             else{
-                ID++
+                const matchInt = line.trim().match(/\d+/g)
+                if(matchInt){
+                    ID = parseInt(matchInt[matchInt.length-1])
+                }
             }
 
             species[name] = {}
             species[name]["name"] = name
 
 
-            if(Number.isInteger(formsStart))
+            if(Number.isInteger(formsStart)){
                 species[name]["ID"] = ID+formsStart
-            else
+            }
+            else if(Number.isInteger(ID)){
                 species[name]["ID"] = ID
+            }
         }
     })
+    
+    for(speciesName in conversionTable){
+        species[speciesName]["ID"] = species[conversionTable[speciesName]]["ID"]
+    }
+
     return species
 }
 
