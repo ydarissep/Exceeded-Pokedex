@@ -1,7 +1,7 @@
 function regexWildLocations(jsonWildLocations, locations){
 
 	const wildEncounters = jsonWildLocations["wild_encounter_groups"][0]["encounters"]
-	const methodArrayWild = ["land_morning_mons", "land_mons", "land_night_mons", "water_mons", "rock_smash_mons", "fishing_mons", "headbutt_morning_mons", "headbutt_mons", "headbutt_night_mons", "hidden_morning_mons", "hidden_nights_mons", "hidden_mons"]
+	const methodArrayWild = ["land_morning_mons", "land_mons", "land_night_mons", "water_mons", "rock_smash_mons", "fishing_mons", "headbutt_morning_mons", "headbutt_mons", "headbutt_night_mons", "hidden_morning_mons", "hidden_night_mons", "hidden_mons"]
 
 	for(let i = 0; i < wildEncounters.length; i++)
 	{
