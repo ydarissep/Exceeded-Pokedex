@@ -1,11 +1,19 @@
 function regexSpecies(textSpecies, species){
     const lines = textSpecies.split("\n")
-    let formsStart = null, ID = 0, conversionTable = []
+    let formsStart = 0, gen9Start = 0, gigaStart = 0, customStart = 0, ID = 0, conversionTable = []
 
     lines.forEach(line => {
-
-        if (/FORMS_START/i.test(line) && !formsStart){
+        if(/FORMS_START/i.test(line) && !formsStart){
             formsStart = ID
+        }
+        else if(/GEN9_START/i.test(line) && !gen9Start){
+            gen9Start = formsStart + ID
+        }
+        else if(/GIGANTAMAX_START/i.test(line) && !gigaStart){
+            gigaStart = gen9Start + ID
+        }
+        else if(/CUSTOM_START/i.test(line) && !customStart){
+            customStart = gigaStart + ID
         }
 
         const matchSpecies = line.match(/#define *(SPECIES_\w+)/i)
@@ -16,25 +24,18 @@ function regexSpecies(textSpecies, species){
             const matchSpeciesID = line.trim().match(/SPECIES_\w+$/i)
             if(matchSpeciesID){
                 conversionTable[name] = matchSpeciesID[0]
-                ID = null
             }
             else{
-                const matchInt = line.trim().match(/\d+/g)
+                const matchInt = line.trim().match(/\d+$/)
                 if(matchInt){
-                    ID = parseInt(matchInt[matchInt.length-1])
+                    ID = parseInt(matchInt[0])
                 }
             }
 
             species[name] = {}
             species[name]["name"] = name
 
-
-            if(Number.isInteger(formsStart)){
-                species[name]["ID"] = ID+formsStart
-            }
-            else if(Number.isInteger(ID)){
-                species[name]["ID"] = ID
-            }
+            species[name]["ID"] = Math.max(formsStart, gen9Start, gigaStart, customStart) + ID
         }
     })
     
