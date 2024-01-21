@@ -1,1 +1,75 @@
 @import url(https://ydarissep.github.io/dex-core/style/speciesTable.css);
+
+.abilities {
+    display: none !important;
+}
+
+
+
+
+
+
+
+
+
+
+@media 
+only screen and (max-width: 850px) {
+    .baseHPContainer, 
+    .baseAttackContainer, 
+    .baseDefenseContainer, 
+    .baseSpAttackContainer,
+    .baseSpDefenseContainer,
+    .baseSpeedContainer,
+    .BSTContainer {
+    	width: 7% !important;
+    }
+
+    #speciesTableTbody .sprite {
+    	width: 11% !important;
+    }
+
+    #speciesTableTbody .types {
+    	width: 12% !important;
+    }
+
+    #speciesTableTbody .ID {
+        display: inline-block !important;
+    	width: 7% !important;
+    }
+    
+    #speciesTableTbody .nameContainer {
+    	width: 20% !important;
+    }
+}
+
+
+
+@media 
+only screen and (max-width: 500px) {
+    .baseHPContainer, 
+    .baseAttackContainer, 
+    .baseDefenseContainer, 
+    .baseSpAttackContainer,
+    .baseSpDefenseContainer,
+    .baseSpeedContainer,
+    .BSTContainer {
+    	width: 14% !important;
+    }
+
+    #speciesTableTbody .sprite {
+    	width: 30% !important;
+    }
+
+    #speciesTableTbody .types {
+    	width: 30% !important;
+    }
+
+    #speciesTableTbody .ID {
+        display: none !important;
+    }
+    
+    #speciesTableTbody .nameContainer {
+    	width: 40% !important;
+    }
+}

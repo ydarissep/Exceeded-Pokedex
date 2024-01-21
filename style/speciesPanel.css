@@ -3,3 +3,42 @@
 .speciesPanelAbilitiesDescriptionPadding {
     font-size: 15px;
 }
+
+#speciesPanelAbilityTablesContainer > table {
+    width: 100%;
+}
+
+#speciesPanelAbilityTablesContainer > table > thead > tr > th {
+    background: rgba(215, 212, 231, 0.075); 
+    color: #f1f1f1; 
+    font-weight: 700;
+    padding: 0.5rem 0.5rem;
+}
+
+#speciesPanelAbilityTablesContainer th:hover {
+	background: rgba(215, 212, 231, 0.075) !important; 
+    cursor: default !important;
+}
+
+#speciesPanellevelUpAbilitiesTableTHead th {
+    font-size: min(max(2.5vw, 10px), 18px) !important;
+}
+
+#speciesPanellevelUpAbilitiesTableTbody {
+    font-size: min(max(2.5vw, 15px), 18px) !important;
+}
+
+/* ------------------------------- very cool and (unused) poggers css --------------------------- */ /*
+#speciesPanelTutorAbilityTableTbody > tr:nth-of-type(2n+1) > td:nth-of-type(2n), #speciesPanelTutorAbilityTableTbody > tr:nth-of-type(2n) > td:nth-of-type(2n+1) {
+    background: #2e2e33;
+}
+
+#speciesPanelTutorAbilityTableTbody > tr:nth-of-type(2n+1) > td:nth-of-type(2n+1), #speciesPanelTutorAbilityTableTbody > tr:nth-of-type(2n) > td:nth-of-type(2n) {
+    background: #212125;
+}
+
+#speciesPanelTutorAbilityTableTbody > tr > td:hover {
+    background: rgba(215, 212, 231, 0.075) !important; 
+    cursor: pointer !important;
+}
+*/

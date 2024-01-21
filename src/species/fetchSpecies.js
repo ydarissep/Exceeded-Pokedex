@@ -14,6 +14,29 @@ async function getBaseStats(species){
     return regexBaseStats(textBaseStats, species)
 }
 
+async function getLevelUpAbilitiesLearnsets(species){
+    footerP("Fetching level up abilities")
+    const rawlevelUpAbilitiesLearnsets = await fetch(`https://raw.githubusercontent.com/${repo}/level_up_ability_learnsets.h`)
+    const textlevelUpAbilitiesLearnsets = await rawlevelUpAbilitiesLearnsets.text()
+
+    const rawlevelUpAbilitiesLearnsetsPointers = await fetch(`https://raw.githubusercontent.com/${repo}/level_up_ability_pointers.h`)
+    const textlevelUpAbilitiesLearnsetsPointers = await rawlevelUpAbilitiesLearnsetsPointers.text()
+
+
+    const levelUpAbilitiesLearnsetsConversionTable = getlevelUpAbilitiesLearnsetsConversionTable(textlevelUpAbilitiesLearnsetsPointers)
+
+
+    return regexlevelUpAbilitiesLearnsets(textlevelUpAbilitiesLearnsets, levelUpAbilitiesLearnsetsConversionTable, species)
+}
+
+async function getTutorAbilities(species){
+    footerP("Fetching tutor abilities")
+    const rawTutorAbilities = await fetch(`https://raw.githubusercontent.com/${repo}/tutor_abilities.h`)
+    const textTutorAbilities = await rawTutorAbilities.text()
+
+    return regexTutorAbilities(textTutorAbilities, species)
+}
+
 async function getLevelUpLearnsets(species){
     footerP("Fetching level up learnsets")
     const rawLevelUpLearnsets = await fetch(`https://raw.githubusercontent.com/${repo}/level_up_learnsets.h`)
@@ -107,6 +130,8 @@ async function buildSpeciesObj(){
     species = await getForms(species) // should be called in that order until here
     species = await getBaseStats(species)
     species = await getChanges(species, "https://raw.githubusercontent.com/rh-hideout/pokeemerald-expansion/master/src/data/pokemon/species_info.h")
+    species = await getLevelUpAbilitiesLearnsets(species)
+    species = await getTutorAbilities(species)
     species = await getLevelUpLearnsets(species)
     species = await getTMHMLearnsets(species)
     species = await getEggMovesLearnsets(species)
@@ -138,8 +163,8 @@ function initializeSpeciesObj(species){
         species[name]["baseSpDefense"] = 0
         species[name]["baseSpeed"] = 0
         species[name]["BST"] = 0
-        species[name]["abilities"] = []
-        species[name]["innates"] = []
+        species[name]["abilities"] = ["ABILITY_NONE", "ABILITY_NONE", "ABILITY_NONE"]
+        //species[name]["innates"] = []
         species[name]["type1"] = ""
         species[name]["type2"] = ""
         species[name]["item1"] = ""
@@ -147,6 +172,8 @@ function initializeSpeciesObj(species){
         species[name]["eggGroup1"] = ""
         species[name]["eggGroup2"] = ""
         species[name]["changes"] = []
+        species[name]["levelUpAbilities"] = []
+        species[name]["tutorAbilities"] = []
         species[name]["levelUpLearnsets"] = []
         species[name]["TMHMLearnsets"] = []
         species[name]["eggMovesLearnsets"] = []

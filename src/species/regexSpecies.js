@@ -57,7 +57,7 @@ function regexSpecies(textSpecies, species){
 function regexBaseStats(textBaseStats, species){
     const lines = textBaseStats.split("\n")
 
-    const regex = /baseHP|baseAttack|baseDefense|baseSpeed|baseSpAttack|baseSpDefense|type1|type2|item1|item2|eggGroup1|eggGroup2|abilities|innates/i
+    const regex = /baseHP|baseAttack|baseDefense|baseSpeed|baseSpAttack|baseSpDefense|type1|type2|item1|item2|eggGroup1|eggGroup2/i //removed |abilities|innates at the end
     let stop = false, value, name
 
     lines.forEach(line => {
@@ -91,6 +91,7 @@ function regexBaseStats(textBaseStats, species){
                 if(value)
                     value = value[0]
             }
+            /*
             else if(match === "abilities"){
                 value = line.match(/ABILITY_\w+/ig)
                 if(value){
@@ -113,6 +114,7 @@ function regexBaseStats(textBaseStats, species){
                     value = innates
                 }
             }
+            */
 
 
 
@@ -305,6 +307,107 @@ function regexChanges(textChanges, species){
 
 
 
+function getlevelUpAbilitiesLearnsetsConversionTable(textlevelUpAbilitiesLearnsetsPointers){
+    const lines = textlevelUpAbilitiesLearnsetsPointers.split("\n")
+    let conversionTable = {}
+
+    lines.forEach(line => {
+
+        const matchSpecies = line.match(/SPECIES_\w+/i)
+        if(matchSpecies){
+            const value = matchSpecies[0]
+
+            const matchConversion = line.match(/s\w+levelUpAbilityLearnset/i)
+            if(matchConversion){
+                const index = matchConversion[0]
+
+                if(conversionTable[index] === undefined) // DO NOT TOUCH THAT FUTURE ME, THIS IS THE WAY, DON'T QUESTION ME
+                    conversionTable[index] = [value]
+                else // DO NOT TOUCH THAT FUTURE ME, THIS IS THE WAY, DON'T QUESTION ME
+                    conversionTable[index].push(value)
+            }
+        }
+    })
+    return conversionTable
+}
+
+function regexlevelUpAbilitiesLearnsets(textlevelUpAbilitiesLearnsets, conversionTable, species){
+    const lines = textlevelUpAbilitiesLearnsets.split("\n")
+    let speciesArray = []
+
+    lines.forEach(line => {
+        const matchConversion = line.match(/s\w+levelUpAbilityLearnset/i)
+        if(matchConversion){
+            const index = matchConversion[0]
+            speciesArray = conversionTable[index]
+        }
+
+        const matchLevelAbility = line.match(/(\d+) *, *(ABILITY_\w+) *, *(\w+) *, *(\w+) *, *(ABILITY_\w+) *, *(ABILITY_\w+) *, *(ABILITY_\w+) *, *(ABILITY_\w+)/i)
+        if(matchLevelAbility && matchLevelAbility.length >= 9){
+            const levelUpAbility = [matchLevelAbility[1], matchLevelAbility[2], matchLevelAbility[3], matchLevelAbility[4], matchLevelAbility[5], matchLevelAbility[6], matchLevelAbility[7], matchLevelAbility[8]]
+            if(speciesArray)
+            {
+                for(let i = 0; i < speciesArray.length; i++){
+                    if(!species[speciesArray[i]]["levelUpAbilities"].find((levelUpAbilities) => levelUpAbilities[1] == levelUpAbility[1])){
+                        species[speciesArray[i]]["levelUpAbilities"].push(levelUpAbility)
+                    }
+                }
+            }
+        }
+    })
+    return species
+}
+
+
+
+
+
+
+
+function regexTutorAbilities(textTutorAbilities, species){
+    const lines = textTutorAbilities.split("\n")
+    let conversionTable = {}, speciesArray = []
+
+    textTutorAbilities.match(/\[ *(SPECIES_\w+)\ *] * = *(s\w+TutorAbility)/ig).forEach(matchTutorAbilities => {
+        const matchTutorAbility = matchTutorAbilities.match(/s\w+TutorAbility/i)[0]
+        const matchSpecies = matchTutorAbilities.match(/SPECIES_\w+/)[0]
+        if(conversionTable[matchTutorAbility]){
+            conversionTable[matchTutorAbility].push(matchSpecies)
+        }
+        else{
+            conversionTable[matchTutorAbility] = [matchSpecies]
+        }
+    })
+
+    lines.forEach(line => {
+        const matchConversion = line.match(/s\w+TutorAbility/i)
+        if(matchConversion){
+            const index = matchConversion[0]
+            speciesArray = conversionTable[index]
+        }
+
+        const matchTutorAbility = line.match(/TUTOR.*\((\w+)\)/i)
+        if(matchTutorAbility){
+            if(speciesArray)
+            {
+                for(let i = 0; i < speciesArray.length; i++){
+                    species[speciesArray[i]]["tutorAbilities"].push(`ABILITY_${matchTutorAbility[1]}`)
+                }
+            }
+        }
+    })
+    return species
+}
+
+
+
+
+
+
+
+
+
+
 function getLevelUpLearnsetsConversionTable(textLevelUpLearnsetsPointers){
     const lines = textLevelUpLearnsetsPointers.split("\n")
     let conversionTable = {}
@@ -319,7 +422,6 @@ function getLevelUpLearnsetsConversionTable(textLevelUpLearnsetsPointers){
             const matchConversion = line.match(/s\w+LevelUpLearnset/i)
             if(matchConversion){
                 const index = matchConversion[0]
-
 
                 if(conversionTable[index] === undefined) // DO NOT TOUCH THAT FUTURE ME, THIS IS THE WAY, DON'T QUESTION ME
                     conversionTable[index] = [value]
@@ -341,7 +443,6 @@ function regexLevelUpLearnsets(textLevelUpLearnsets, conversionTable, species){
             const index = matchConversion[0]
             speciesArray = conversionTable[index]
         }
-
 
         const matchLevelMove = line.match(/(\d+) *, *(MOVE_\w+)/i)
         if(matchLevelMove){
