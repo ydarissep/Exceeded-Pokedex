@@ -4,15 +4,6 @@
     display: none !important;
 }
 
-
-
-
-
-
-
-
-
-
 @media 
 only screen and (max-width: 850px) {
     .baseHPContainer, 
@@ -58,7 +49,7 @@ only screen and (max-width: 500px) {
     }
 
     #speciesTableTbody .sprite {
-    	width: 30% !important;
+    	width: 25% !important;
     }
 
     #speciesTableTbody .types {
@@ -66,10 +57,10 @@ only screen and (max-width: 500px) {
     }
 
     #speciesTableTbody .ID {
-        display: none !important;
+        width: 14% !important;
     }
     
     #speciesTableTbody .nameContainer {
-    	width: 40% !important;
+    	width: 30% !important;
     }
 }
