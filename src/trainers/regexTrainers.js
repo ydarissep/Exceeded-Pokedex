@@ -197,17 +197,6 @@ async function regexTrainersParties(textTrainersParties, [trainers, conversionTa
                         mon["item"] = matchItem[0]
                     }
                 }
-                else if(/.abilityNum *=/i.test(line)){
-                    const matchAbility = line.match(/\w+_ABILITY/)
-                    if(matchAbility){
-                        if(matchAbility[0] === "SECOND_ABILITY"){
-                            mon["ability"] = 1
-                        }
-                        else if(matchAbility[0] === "HIDDEN_ABILITY"){
-                            mon["ability"] = 2
-                        }
-                    }
-                }
                 else if(/.iv *=/i.test(line)){
                     const matchIVs = line.match(/\d+/g)
                     if(matchIVs){

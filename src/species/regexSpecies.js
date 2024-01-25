@@ -348,9 +348,7 @@ function regexlevelUpAbilitiesLearnsets(textlevelUpAbilitiesLearnsets, conversio
             if(speciesArray)
             {
                 for(let i = 0; i < speciesArray.length; i++){
-                    if(!species[speciesArray[i]]["levelUpAbilities"].find((levelUpAbilities) => levelUpAbilities[1] == levelUpAbility[1])){
-                        species[speciesArray[i]]["levelUpAbilities"].push(levelUpAbility)
-                    }
+                    species[speciesArray[i]]["levelUpAbilities"].push(levelUpAbility)
                 }
             }
         }

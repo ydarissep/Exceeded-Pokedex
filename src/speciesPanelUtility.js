@@ -17,48 +17,52 @@ function buildSpeciesPanellevelUpAbilitiesTable(name){
         speciesPanellevelUpAbilitiesTableTbody.removeChild(speciesPanellevelUpAbilitiesTableTbody.firstChild)
     }
 
+    let duplicate = []
     for(let i = 0; i < species[name]["levelUpAbilities"].length; i++){
-        const row = document.createElement("tr")
+        if(!duplicate.includes(species[name]["levelUpAbilities"][i][1])){
+            const row = document.createElement("tr")
 
-        const abilityLevel = document.createElement("td")
-        abilityLevel.innerText = species[name]["levelUpAbilities"][i][0]
-        row.append(abilityLevel)
+            const abilityLevel = document.createElement("td")
+            abilityLevel.innerText = species[name]["levelUpAbilities"][i][0]
+            row.append(abilityLevel)
 
-        const abilityName = document.createElement("td")
-        abilityName.innerText = abilities[species[name]["levelUpAbilities"][i][1]]["ingameName"]
-        abilityName.className = "bold"
-        row.append(abilityName)
+            const abilityName = document.createElement("td")
+            abilityName.innerText = abilities[species[name]["levelUpAbilities"][i][1]]["ingameName"]
+            abilityName.className = "bold"
+            row.append(abilityName)
 
-        const abilityInnate = document.createElement("td")
-        if(species[name]["levelUpAbilities"][i][2] === "FALSE"){
-            abilityInnate.innerText = "No"
+            const abilityInnate = document.createElement("td")
+            if(species[name]["levelUpAbilities"][i][2] === "FALSE"){
+                abilityInnate.innerText = "No"
+            }
+            else{
+                abilityInnate.innerText = "Yes"
+            }
+            row.append(abilityInnate)
+
+            const abilityTemporary = document.createElement("td")
+            if(species[name]["levelUpAbilities"][i][3] === "FALSE"){
+                abilityTemporary.innerText = "No"
+            }
+            else{
+                abilityTemporary.innerText = "Yes"
+            }
+            row.append(abilityTemporary)
+
+            for(let j = 0; j < 4; j++){
+                const abilityIncompatibility = document.createElement("td")
+                abilityIncompatibility.innerText = abilities[species[name]["levelUpAbilities"][i][4+j]]["ingameName"]
+                abilityIncompatibility.className = "bold"
+                row.append(abilityIncompatibility)
+            }
+
+            row.addEventListener("click", () => {
+                createPopupAbility([species[name]["levelUpAbilities"][i][1]])
+            })
+
+            speciesPanellevelUpAbilitiesTableTbody.append(row)
+            duplicate.push(species[name]["levelUpAbilities"][i][1])
         }
-        else{
-            abilityInnate.innerText = "Yes"
-        }
-        row.append(abilityInnate)
-
-        const abilityTemporary = document.createElement("td")
-        if(species[name]["levelUpAbilities"][i][3] === "FALSE"){
-            abilityTemporary.innerText = "No"
-        }
-        else{
-            abilityTemporary.innerText = "Yes"
-        }
-        row.append(abilityTemporary)
-
-        for(let j = 0; j < 4; j++){
-            const abilityIncompatibility = document.createElement("td")
-            abilityIncompatibility.innerText = abilities[species[name]["levelUpAbilities"][i][4+j]]["ingameName"]
-            abilityIncompatibility.className = "bold"
-            row.append(abilityIncompatibility)
-        }
-
-        row.addEventListener("click", () => {
-            createPopupAbility([species[name]["levelUpAbilities"][i][1]])
-        })
-
-        speciesPanellevelUpAbilitiesTableTbody.append(row)
     }
 
     if(species[name]["levelUpAbilities"].length === 0){
