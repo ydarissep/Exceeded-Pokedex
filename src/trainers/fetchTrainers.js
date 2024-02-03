@@ -21,10 +21,10 @@ async function getTrainers(trainers){
 
 async function buildTrainersObj(){
     let trainers = {}
-
+    
     trainers = await getScripts(trainers)
     trainers = await getTrainers(trainers)
-    
+
     trainers = await bugFixTrainers(trainers)
 
     await localStorage.setItem("trainers", LZString.compressToUTF16(JSON.stringify(trainers)))

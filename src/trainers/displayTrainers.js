@@ -1,7 +1,7 @@
 fetch("https://raw.githubusercontent.com/ydarissep/dex-core/main/src/trainers/displayTrainers.js").then(response => {
     return response.text()
 }).then(text => {
-    text = text.replaceAll(/(?<!function )createTrainerSpeciesTbody/g, "createTrainerSpeciesTbodyEE")
+    text = text.replaceAll("createTrainerSpeciesTbody(trainers[zone][trainer])", "createTrainerSpeciesTbodyEE(trainers[zone][trainer])")
     eval.call(window,text)
 }).catch(error => {
     console.warn(error)
@@ -9,7 +9,7 @@ fetch("https://raw.githubusercontent.com/ydarissep/dex-core/main/src/trainers/di
 
 
 
-function createTrainerSpeciesTbodyEE(trainerObj, key){
+function createTrainerSpeciesTbodyEE(trainerObj){
     const trainerTbody = document.createElement("tbody"); trainerTbody.className = "trainerTbody"
     let difficulty = "Normal"
     if(trainerObj["party"][trainersDifficulty]){

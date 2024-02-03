@@ -1,7 +1,7 @@
 fetch("https://raw.githubusercontent.com/ydarissep/dex-core/main/src/tableFilters.js").then(response => {
     return response.text()
 }).then(text => {
-    text = text.replace(/(?<!function )filterSpeciesAbility/, "filterSpeciesAbilitiesLearnsets")
+    text = text.replace("filterSpeciesAbility(value, label)", "filterSpeciesAbilitiesLearnsets(value, label)")
 
     eval.call(window,text)
 }).catch(error => {
