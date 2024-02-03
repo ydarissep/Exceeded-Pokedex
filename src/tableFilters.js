@@ -5,6 +5,7 @@ fetch("https://raw.githubusercontent.com/ydarissep/dex-core/main/src/tableFilter
 
     eval.call(window,text)
 }).catch(error => {
+    footerP(error)
     console.warn(error)
 })
 
