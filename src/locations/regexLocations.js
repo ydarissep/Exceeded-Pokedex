@@ -1,57 +1,59 @@
-function regexWildLocations(jsonWildLocations, locations){
+function regexWildLocations(textWildLocations, locations){
+	const lines = textWildLocations.split("\n")
+	const regexMethod = /land_morning_mons|land_night_mons|land_mons|water_mons|rock_smash_mons|fishing_mons|headbutt_morning_mons|headbutt_night_mons|headbutt_mons|hidden_morning_mons|hidden_night_mons|hidden_mons/
+	let zone = null, method = null, name = null, index = 0
 
-	const wildEncounters = jsonWildLocations["wild_encounter_groups"][0]["encounters"]
-	const methodArrayWild = ["land_morning_mons", "land_mons", "land_night_mons", "water_mons", "rock_smash_mons", "fishing_mons", "headbutt_morning_mons", "headbutt_mons", "headbutt_night_mons", "hidden_morning_mons", "hidden_night_mons", "hidden_mons"]
-
-	for(let i = 0; i < wildEncounters.length; i++)
-	{
-		let zone = "Placeholder"
-
-		if("map" in wildEncounters[i]){
-			zone = sanitizeString(wildEncounters[i]["map"].replace(/^MAP_/i, "").replace(/([A-Z])(\d)/g, '$1 $2').trim())
+    lines.forEach(line => {
+		if(/MAP_\w+/.test(line)){
+			index = 0
+			method = null
+			name = null
+			zone = sanitizeString(line.match(/MAP_(\w+)/)[1].replace(/([A-Z])(\d)/g, '$1 $2').trim())
 
 			if(!(zone in locations)){
 				locations[zone] = {}
 			}
+		}
+		else if(regexMethod.test(line)){
+			index = 0
+			name = null
+			method = replaceMethodString(line.match(regexMethod)[0], index)
 
-			for(let j = 0; j < methodArrayWild.length; j++){
-				if(methodArrayWild[j] in wildEncounters[i]){
-					for(let k = 0; k < wildEncounters[i][methodArrayWild[j]]["mons"].length; k++){
-
-						const method = replaceMethodString(methodArrayWild[j], k)
-						const name = wildEncounters[i][methodArrayWild[j]]["mons"][k]["species"]
-
-						if(!(method in locations[zone])){
-							locations[zone][method] = {}
-						}
-
-
-						if(name in locations[zone][method]){
-			    			locations[zone][method][name] += returnRarity(method, k)
-			    		}
-			    		else{
-			    			locations[zone][method][name] = returnRarity(method, k)
-			    		}
-
-					}
-				}
+			if(zone && !(method in locations[zone])){
+				locations[zone][method] = {}
 			}
 		}
-		else{
-			console.log("missing \"map\" in wildEncounters[", i, "] (regexWildLocations)")
-			continue
+		else if(/SPECIES_\w+/.test(line)){
+			name = line.match(/SPECIES_\w+/)[0]
+
+			if(/fish|rod/i.test(method)){
+				method = replaceMethodString(method, index)
+				if(zone && !(method in locations[zone])){
+					locations[zone][method] = {}
+				}
+			}
+
+			if(zone && method && name in locations[zone][method]){
+				locations[zone][method][name] += returnRarity(method, index)
+			}
+			else if(zone && method){
+				locations[zone][method][name] = returnRarity(method, index)
+			}
+			index++
 		}
-	}
 
+	})
 
+	delete locations["Meteor Falls Draconid Tribe"]
     return locations
 }
 
 
 
 
+
 function replaceMethodString(method, index){
-	if(method.match(/fish/i)){
+	if(method.match(/fish|rod/i)){
 		if(index >=0 && index <= 1)
 			return "Old Rod"
 		else if(index >= 2 && index <= 4)

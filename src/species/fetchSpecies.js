@@ -8,14 +8,12 @@ async function getSpecies(species){
 
 
 async function getBaseStats(species){
-    footerP("Fetching base stats")
     const rawBaseStats = await fetch(`https://raw.githubusercontent.com/${repo}/base_stats.h`)
     const textBaseStats = await rawBaseStats.text()
     return regexBaseStats(textBaseStats, species)
 }
 
 async function getLevelUpAbilitiesLearnsets(species){
-    footerP("Fetching level up abilities")
     const rawlevelUpAbilitiesLearnsets = await fetch(`https://raw.githubusercontent.com/${repo}/level_up_ability_learnsets.h`)
     const textlevelUpAbilitiesLearnsets = await rawlevelUpAbilitiesLearnsets.text()
 
@@ -30,7 +28,6 @@ async function getLevelUpAbilitiesLearnsets(species){
 }
 
 async function getTutorAbilities(species){
-    footerP("Fetching tutor abilities")
     const rawTutorAbilities = await fetch(`https://raw.githubusercontent.com/${repo}/tutor_abilities.h`)
     const textTutorAbilities = await rawTutorAbilities.text()
 
@@ -38,7 +35,6 @@ async function getTutorAbilities(species){
 }
 
 async function getLevelUpLearnsets(species){
-    footerP("Fetching level up learnsets")
     const rawLevelUpLearnsets = await fetch(`https://raw.githubusercontent.com/${repo}/level_up_learnsets.h`)
     const textLevelUpLearnsets = await rawLevelUpLearnsets.text()
 
@@ -53,7 +49,6 @@ async function getLevelUpLearnsets(species){
 }
 
 async function getTMHMLearnsets(species){
-    footerP("Fetching TMHM learnsets")
     const rawTMHMLearnsets = await fetch(`https://raw.githubusercontent.com/${repo}/tmhm_learnsets.h`)
     const textTMHMLearnsets = await rawTMHMLearnsets.text()
 
@@ -63,7 +58,6 @@ async function getTMHMLearnsets(species){
 }
 
 async function getEvolution(species){
-    footerP("Fetching evolution line")
     const rawEvolution = await fetch(`https://raw.githubusercontent.com/${repo}/evolution.h`)
     const textEvolution = await rawEvolution.text()
 
@@ -71,7 +65,6 @@ async function getEvolution(species){
 }
 
 async function getForms(species){
-    footerP("Fetching alternate forms")
     const rawForms = await fetch(`https://raw.githubusercontent.com/${repo}/form_species_tables.h`)
     const textForms = await rawForms.text()
 
@@ -79,7 +72,6 @@ async function getForms(species){
 }
 
 async function getEggMovesLearnsets(species){
-    footerP("Fetching egg moves learnsets")
     const rawEggMoves = await fetch(`https://raw.githubusercontent.com/${repo}/egg_moves.h`)
     const textEggMoves = await rawEggMoves.text()
 
@@ -87,7 +79,6 @@ async function getEggMovesLearnsets(species){
 }
 
 async function getTutorLearnsets(species){
-    footerP("Fetching tutor learnsets")
     const rawTutorLearnsets = await fetch(`https://raw.githubusercontent.com/${repo}/tutor_learnsets.h`)
     const textTutorLearnsets = await rawTutorLearnsets.text()
 

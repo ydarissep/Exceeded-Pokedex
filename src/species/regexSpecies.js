@@ -707,7 +707,6 @@ function regexSprite(textSprite, conversionTable, species){
                     let url = `https://raw.githubusercontent.com/${repo}/graphics/pokemon/${path}.png`
                     for(let i = 0; i < conversionTable[conversion].length; i++){
                         species[speciesArray[i]]["sprite"] = url
-                        spriteRemoveBgReturnBase64(speciesArray[i], species)
                     }
                 }
             }

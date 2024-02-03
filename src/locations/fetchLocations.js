@@ -1,9 +1,9 @@
 async function getWildLocations(locations){
     footerP("Fetching wild locations")
     const rawWildLocations = await fetch(`https://raw.githubusercontent.com/${repo}/wild_encounters.json`)
-    const jsonWildLocations = await rawWildLocations.json()
+    const textWildLocations = await rawWildLocations.text()
 
-    return regexWildLocations(jsonWildLocations, locations)   
+    return regexWildLocations(textWildLocations, locations)   
 }
 
 async function buildLocationsObj(){
