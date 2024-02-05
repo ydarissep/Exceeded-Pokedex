@@ -1,13 +1,14 @@
 function regexWildLocations(textWildLocations, locations){
 	const lines = textWildLocations.split("\n")
 	const regexMethod = /land_morning_mons|land_night_mons|land_mons|water_mons|rock_smash_mons|fishing_mons|headbutt_morning_mons|headbutt_night_mons|headbutt_mons|hidden_morning_mons|hidden_night_mons|hidden_mons/
-	let zone = null, method = null, name = null, index = 0
+	let zone = null, method = null, name = null, index = 0, monsGuard = 0
 
     lines.forEach(line => {
 		if(/MAP_\w+/.test(line)){
 			index = 0
 			method = null
 			name = null
+			monsGuard = 0
 			zone = sanitizeString(line.match(/MAP_(\w+)/)[1].replace(/([A-Z])(\d)/g, '$1 $2').trim())
 
 			if(!(zone in locations)){
@@ -17,16 +18,23 @@ function regexWildLocations(textWildLocations, locations){
 		else if(regexMethod.test(line)){
 			index = 0
 			name = null
+			monsGuard = 0
 			method = replaceMethodString(line.match(regexMethod)[0], index)
 
 			if(zone && !(method in locations[zone])){
 				locations[zone][method] = {}
 			}
 		}
+		else if(/\" *mons *\"/.test(line)){
+			monsGuard++
+			if(monsGuard > 1){
+				method = null
+			}
+		}
 		else if(/SPECIES_\w+/.test(line)){
 			name = line.match(/SPECIES_\w+/)[0]
 
-			if(/fish|rod/i.test(method)){
+			if(/rod/i.test(method)){
 				method = replaceMethodString(method, index)
 				if(zone && !(method in locations[zone])){
 					locations[zone][method] = {}
@@ -60,8 +68,6 @@ function replaceMethodString(method, index){
 			return "Good Rod"
 		else if(index >= 5 && index <= 9)
 			return "Super Rod"
-		else
-			return "Fishing"
 	}
 	else if(method.match(/headbutt_night/i)){
 		return "Headbutt Night"
