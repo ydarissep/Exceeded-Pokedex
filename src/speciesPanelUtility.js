@@ -33,19 +33,19 @@ function buildSpeciesPanellevelUpAbilitiesTable(name){
 
             const abilityInnate = document.createElement("td")
             if(species[name]["levelUpAbilities"][i][2] === "FALSE"){
-                abilityInnate.innerText = "No"
+                abilityInnate.innerText = "-"
             }
             else{
-                abilityInnate.innerText = "Yes"
+                abilityInnate.innerText = "✔"
             }
             row.append(abilityInnate)
 
             const abilityTemporary = document.createElement("td")
             if(species[name]["levelUpAbilities"][i][3] === "FALSE"){
-                abilityTemporary.innerText = "No"
+                abilityTemporary.innerText = "-"
             }
             else{
-                abilityTemporary.innerText = "Yes"
+                abilityTemporary.innerText = "✔"
             }
             row.append(abilityTemporary)
 
