@@ -90,7 +90,13 @@ function replaceMethodString(method, index){
 	else if(method.match(/water/i)){
 		return "Surfing"
 	}
-	else if(method.match(/smash/i)){
+	else if(method.match(/rock_smash_night/i)){
+		return "Rock Smash Night"
+	}
+	else if(method.match(/rock_smash_morning/i)){
+		return "Rock Smash Morning"
+	}
+	else if(method.match(/rock_smash/i)){
 		return "Rock Smash"
 	}
 	else if(method.match(/morning/i)){
@@ -153,7 +159,7 @@ function returnRarity(method, index){
 			return 34
 		}
 	}
-	else if(method === "Rock Smash"){
+	else if(method.match(/Rock Smash/i)){
 		if(index === 0)
 			return 40
 		else if(index === 1)
