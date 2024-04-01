@@ -41,14 +41,10 @@ function createTrainerSpeciesTbodyEE(trainerObj){
             }) 
             trainerSpeciesContainer.append(trainerSpeciesAbility)
 
-            trainerSpeciesContainer.append(getLvlNatureEl(trainerSpeciesObj))
-
             const trainerSpeciesItem = document.createElement("div"); trainerSpeciesItem.innerText = sanitizeString(trainerSpeciesObj["item"]); trainerSpeciesItem.className = "bold trainerSpeciesItem"
             trainerSpeciesContainer.append(trainerSpeciesItem)
 
-            trainerSpeciesContainer.append(returnEVsObj(trainerSpeciesObj["evs"]))
-
-            trainerSpeciesContainer.append(returnIVsObj(trainerSpeciesObj["ivs"]))
+            trainerSpeciesContainer.append(returnEVsIVsObj(trainerSpeciesObj))
 
             trainerSpeciesContainer.append(returnMovesObj(trainerSpeciesObj))
 
