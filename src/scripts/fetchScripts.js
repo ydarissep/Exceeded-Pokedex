@@ -177,7 +177,7 @@ function getItemSpriteSrc(itemName){
             return sprites[itemName]
         }
     }
-    else if(itemName in items){ //change later
+    else{
         spriteRemoveItemBgReturnBase64(itemName)
         return items[itemName]["url"]
     }
