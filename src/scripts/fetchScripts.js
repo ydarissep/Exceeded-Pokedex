@@ -90,7 +90,7 @@ async function buildScriptsObjs(){
     await bugFixTrainers()
 
     localStorage.setItem("trainers", LZString.compressToUTF16(JSON.stringify(trainers)))
-    //localStorage.setItem("items", LZString.compressToUTF16(JSON.stringify(items)))
+    localStorage.setItem("items", LZString.compressToUTF16(JSON.stringify(items)))
     localStorage.setItem("locations", LZString.compressToUTF16(JSON.stringify(locations)))
 }
 
