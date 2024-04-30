@@ -41,8 +41,25 @@ function createTrainerSpeciesTbodyEE(trainerObj){
             }) 
             trainerSpeciesContainer.append(trainerSpeciesAbility)
 
-            const trainerSpeciesItem = document.createElement("div"); trainerSpeciesItem.innerText = sanitizeString(trainerSpeciesObj["item"]); trainerSpeciesItem.className = "bold trainerSpeciesItem"
-            trainerSpeciesContainer.append(trainerSpeciesItem)
+            const trainerSpeciesItemMainContainer = document.createElement("div"); trainerSpeciesItemMainContainer.classList = "trainerSpeciesItemMainContainer"
+            for(let j = 0; j < trainerSpeciesObj["item"].length; j++){
+                const trainerSpeciesItemContainer = document.createElement("div"); trainerSpeciesItemContainer.classList = "flexCenterContainer"
+                const trainerSpeciesItemSprite = document.createElement("img"); trainerSpeciesItemSprite.src = getItemSpriteSrc(trainerSpeciesObj["item"][j]); trainerSpeciesItemSprite.classList = `trainerItemSprite sprite${trainerSpeciesObj["item"][j]}`
+                const trainerSpeciesItem = document.createElement("div"); trainerSpeciesItem.innerText = sanitizeString(trainerSpeciesObj["item"][j]); trainerSpeciesItem.className = "bold trainerSpeciesItem"
+                if(trainerSpeciesObj["item"][j] !== "ITEM_NONE"){
+                    trainerSpeciesItemContainer.classList.add("hyperlink")
+                    trainerSpeciesItemContainer.addEventListener('click', () => {
+                        createPopupItem([trainerSpeciesObj["item"][j]])
+                    })
+                }
+                else{
+                    trainerSpeciesItemSprite.style.visibility = "collapse"
+                }
+                trainerSpeciesItemContainer.append(trainerSpeciesItemSprite)
+                trainerSpeciesItemContainer.append(trainerSpeciesItem)
+                trainerSpeciesItemMainContainer.append(trainerSpeciesItemContainer)
+            }
+            trainerSpeciesContainer.append(trainerSpeciesItemMainContainer)
 
             trainerSpeciesContainer.append(returnEVsIVsObj(trainerSpeciesObj))
 

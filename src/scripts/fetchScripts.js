@@ -3,27 +3,25 @@ async function getScripts(){
     const rawScripts = await fetch(`https://raw.githubusercontent.com/${repo}/event_scripts.s`)
     const textScripts = await rawScripts.text()
 
-    /*
-    const rawTrade = await fetch(`https://raw.githubusercontent.com/${repo}/src/data/trade.h`)
+    const rawTrade = await fetch(`https://raw.githubusercontent.com/${repo}/item/trade.h`)
     const tradeText = await rawTrade.text()
 
-    const rawSpecials = await fetch(`https://raw.githubusercontent.com/${repo}/src/field_specials.c`)
+    const rawSpecials = await fetch(`https://raw.githubusercontent.com/${repo}/item/field_specials.c`)
     const textSpecials = await rawSpecials.text()
 
     await getItemBallSripts(textScripts)
-    */
 
-    await regexScripts(textScripts)   
+    await regexScripts(textScripts, tradeText, await regexSpecialsFunctions(textSpecials))
 }
 
 async function getItems(){
     footerP("Fetching items")
-    const rawItems = await fetch(`https://raw.githubusercontent.com/${repo}/src/data/items.h`)
+    const rawItems = await fetch(`https://raw.githubusercontent.com/${repo}/item/items_2.h`)
     const textItems = await rawItems.text()
 
     const descriptionConversionTable = await regexItems(textItems)
 
-    const rawItemDescriptions = await fetch(`https://raw.githubusercontent.com/${repo}/src/data/text/item_descriptions.h`)
+    const rawItemDescriptions = await fetch(`https://raw.githubusercontent.com/${repo}/item/item_descriptions.h`)
     const textItemDescriptions = await rawItemDescriptions.text()
 
     await regexItemDescriptions(textItemDescriptions, descriptionConversionTable)
@@ -37,17 +35,24 @@ async function getItemBallSripts(textScripts){
 }
 
 async function getHiddenItems(){
-    const rawFlags = await fetch(`https://raw.githubusercontent.com/${repo}/include/constants/flags.h`)
+    const rawFlags = await fetch(`https://raw.githubusercontent.com/${repo}/item/flags.h`)
     const textFlags = await rawFlags.text()
 
     await regexHiddenItems(textFlags)
 }
 
+async function getItemsID(){
+    const rawID = await fetch(`https://raw.githubusercontent.com/${repo}/item/items_id.h`)
+    const textID = await rawID.text()
+
+    await regexItemsID(textID)
+}
+
 async function getItemsIcon(){
-    const rawItemIconTable = await fetch(`https://raw.githubusercontent.com/${repo}/src/data/item_icon_table.h`)
+    const rawItemIconTable = await fetch(`https://raw.githubusercontent.com/${repo}/item/item_icon_table.h`)
     const textItemIconTable = await rawItemIconTable.text()
 
-    const rawItemsIcon = await fetch(`https://raw.githubusercontent.com/${repo}/src/data/graphics/items.h`)
+    const rawItemsIcon = await fetch(`https://raw.githubusercontent.com/${repo}/item/items.h`)
     const textItemsIcon = await rawItemsIcon.text()
 
     await regexItemIcon(textItemIconTable, textItemsIcon)
@@ -71,21 +76,21 @@ async function buildScriptsObjs(){
     window.trainers = {}
     window.items = {}
 
-    //await getItems()
+    await getItems()
 
     await getScripts()
 
     await getTrainers()
 
-    /*
     await getItemsIcon()
     await getHiddenItems()
     await getHeldItems()
-    */
+    await getItemsID()
+
     await bugFixTrainers()
 
     localStorage.setItem("trainers", LZString.compressToUTF16(JSON.stringify(trainers)))
-    localStorage.setItem("items", LZString.compressToUTF16(JSON.stringify(items)))
+    //localStorage.setItem("items", LZString.compressToUTF16(JSON.stringify(items)))
     localStorage.setItem("locations", LZString.compressToUTF16(JSON.stringify(locations)))
 }
 

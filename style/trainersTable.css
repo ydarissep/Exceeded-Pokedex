@@ -1,1 +1,5 @@
 @import url(https://ydarissep.github.io/dex-core/style/trainersTable.css);
+
+.trainerSpeciesItemMainContainer {
+    height: 72px;
+}
