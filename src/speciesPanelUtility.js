@@ -1,7 +1,9 @@
 fetch("https://raw.githubusercontent.com/ydarissep/dex-core/main/src/speciesPanelUtility.js").then(response => {
     return response.text()
 }).then(text => {
-    text = text.replace(/while *\(speciesAbilities.firstChild\)/i, "\nbuildSpeciesPanelAbilityTablesContainer(name)\n$&") // insert before
+    text = text.replace(/while *\(speciesAbilities.firstChild\)/i, "\nbuildSpeciesPanelAbilityTablesContainer(name)\n$&")
+    text = text.replace("getPokemonResistanceValueAgainstType", "getPokemonResistanceValueAgainstTypeEE")
+    text = text.replace("getPokemonEffectivenessValueAgainstType", "getPokemonEffectivenessValueAgainstTypeEE")
     eval.call(window,text)
 }).catch(error => {
     console.warn(error)
@@ -119,4 +121,78 @@ function buildSpeciesPanelTutorAbilityTable(name){
     else{
         speciesPanelTutorAbilityTable.classList.remove("hide")
     }
+}
+
+
+
+
+
+
+
+
+
+function getPokemonResistanceValueAgainstTypeEE(speciesObj, type){
+    let value = 1
+    if((speciesObj["type1"] !== speciesObj["type2"])){
+        if(typeof speciesObj["type3"] !== "undefined"){
+            if(speciesObj["type3"] !== speciesObj["type1"] && speciesObj["type3"] !== speciesObj["type2"]){
+                value = typeChart[type][speciesObj["type1"]] * typeChart[type][speciesObj["type2"]] * typeChart[type][speciesObj["type3"]]
+            }
+        }
+        else{
+            value = typeChart[type][speciesObj["type1"]] * typeChart[type][speciesObj["type2"]]
+        }
+    }
+    else{
+        if(typeof speciesObj["type3"] !== "undefined"){
+            if(speciesObj["type3"] !== speciesObj["type1"] && speciesObj["type3"] !== speciesObj["type2"]){
+                value = typeChart[type][speciesObj["type1"]] * typeChart[type][speciesObj["type3"]]
+            }
+        }
+        else{
+            value = typeChart[type][speciesObj["type1"]]
+        }
+    }
+
+    if(value == 0.25){
+        value = 0.4
+    }
+    else if(value == 0.125){
+        value = 0.3
+    }
+    else if(value == 4){
+        value = 2.5
+    }
+    else if(value == 8){
+        value = 3
+    }
+
+    return value
+}
+
+function getPokemonEffectivenessValueAgainstTypeEE(speciesObj, type){
+    let offensiveValue = typeChart[speciesObj["type1"]][type]
+    if(typeChart[speciesObj["type2"]][type] > typeChart[speciesObj["type1"]][type]){
+        offensiveValue = typeChart[speciesObj["type2"]][type]
+    }
+    if(typeof speciesObj["type3"] !== "undefined"){
+        if(typeChart[speciesObj["type3"]][type] > typeChart[speciesObj["type1"]][type] && typeChart[speciesObj["type3"]][type] > typeChart[speciesObj["type2"]][type]){
+            offensiveValue = typeChart[speciesObj["type3"]][type]
+        }
+    }
+
+    if(offensiveValue == 0.25){
+        offensiveValue = 0.4
+    }
+    else if(offensiveValue == 0.125){
+        offensiveValue = 0.3
+    }
+    else if(offensiveValue == 4){
+        offensiveValue = 2.5
+    }
+    else if(offensiveValue == 8){
+        offensiveValue = 3
+    }
+
+    return offensiveValue
 }

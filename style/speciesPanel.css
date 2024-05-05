@@ -42,3 +42,12 @@
     cursor: pointer !important;
 }
 */
+
+.typeChartDefensive0\.4, .typeChartDefensive0\.3 {
+	background: rgb(100, 221, 23);
+	font-size: 14px;
+}
+
+.typeChartDefensive2\.5, .typeChartDefensive3 {
+	background: rgb(239, 83, 80);
+}
