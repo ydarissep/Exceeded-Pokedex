@@ -811,7 +811,9 @@ function regexScript(text, scriptPath, tradeArray, specialFunctions, regexSpecia
         const specialFunctionMatch = Array.from(new Set(text.match(regexSpecialFunctions)))
         for(let k = 0; k < specialFunctionMatch.length; k++){
             specialFunctions[specialFunctionMatch[k]].forEach(speciesName => {
-                initScriptsLocations(speciesName, zone, "Gift")
+                if(speciesName in species){
+                    initScriptsLocations(speciesName, zone, "Gift")
+                }
             })
         }
     }
