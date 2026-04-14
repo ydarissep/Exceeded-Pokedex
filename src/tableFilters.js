@@ -1,7 +1,7 @@
 fetch("https://raw.githubusercontent.com/ydarissep/dex-core/main/src/tableFilters.js").then(response => {
     return response.text()
 }).then(text => {
-    text = text.replace("filterSpeciesAbility(value, label)", "filterSpeciesAbilitiesLearnsets(value, label)")
+    text = text.replace("filterSpeciesAbility(value, label, operator)", "filterSpeciesAbilitiesLearnsets(value, label, operator)")
 
     eval.call(window,text)
 }).catch(error => {
@@ -9,7 +9,9 @@ fetch("https://raw.githubusercontent.com/ydarissep/dex-core/main/src/tableFilter
     console.warn(error)
 })
 
-function filterSpeciesAbilitiesLearnsets(value, label){
+
+
+function filterSpeciesAbilitiesLearnsets(value = "Placeholder", label = "Placeholder", operator){
     let abilityName = null
     Object.keys(abilities).forEach(ability => {
         if(abilities[ability]["ingameName"] === value){
@@ -18,6 +20,7 @@ function filterSpeciesAbilitiesLearnsets(value, label){
     })
     if(abilityName){
         for(let i = 0, j = tracker.length; i < j; i++){
+            let passed = true
             let name = tracker[i]["key"]
             if(tracker === locationsTracker){
                 name = tracker[i]["key"].split("\\")[2]
@@ -25,13 +28,15 @@ function filterSpeciesAbilitiesLearnsets(value, label){
             if(!species[name]["levelUpAbilities"].find((levelUpAbility) => levelUpAbility[1] == abilityName)  && !species[name]["tutorAbilities"].includes(abilityName)){
                 if(typeof innatesDefined !== "undefined"){
                     if(!species[name]["innates"].includes(abilityName)){
-                        tracker[i]["filter"].push(`filter${label}${value}`.replaceAll(" ", ""))
+                        passed = false
                     }
                 }
                 else{
-                    tracker[i]["filter"].push(`filter${label}${value}`.replaceAll(" ", ""))
+                    passed = false
                 }
             }
+
+            tracker[i]["filter"] = filterLogicalConnector(tracker[i]["filter"], value.replaceAll(" ", ""), label.replaceAll(" ", ""), operator, passed)
         }
     }
 }
