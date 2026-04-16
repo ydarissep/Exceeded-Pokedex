@@ -1,6 +1,6 @@
 window.repo = "benicioneto/Exceeded-Pokedex/main"
 window.repoTypeChartUrl = "https://raw.githubusercontent.com/ydarissep/Exceeded-Pokedex/main/src/typeChart.json"
-window.checkUpdate = "21 EE"
+window.checkUpdate = "22 EE"
 window.showShinyToggle = true
 //window.innatesDefined = true
 
