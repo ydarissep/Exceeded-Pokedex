@@ -2,6 +2,7 @@ fetch("https://raw.githubusercontent.com/ydarissep/dex-core/main/src/tableFilter
     return response.text()
 }).then(text => {
     text = text.replace("filterSpeciesAbility(value, label, operator)", "filterSpeciesAbilitiesLearnsets(value, label, operator)")
+    text = text.replace("&& label == \"Move\"", "&& (label == \"Move\" || label == \"Ability\")")
 
     eval.call(window,text)
 }).catch(error => {
@@ -38,5 +39,13 @@ function filterSpeciesAbilitiesLearnsets(value = "Placeholder", label = "Placeho
 
             tracker[i]["filter"] = filterLogicalConnector(tracker[i]["filter"], value.replaceAll(" ", ""), label.replaceAll(" ", ""), operator, passed)
         }
+    }
+
+    if (tracker == speciesTracker){
+        let sortTable = false
+        if (speciesMoveFilter == null){
+            sortTable = true
+        }
+        updateSpeciesMoveFilter(sortTable)
     }
 }
