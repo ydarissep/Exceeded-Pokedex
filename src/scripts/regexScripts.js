@@ -379,7 +379,7 @@ async function regexItemDescriptions(textItemDescriptions, conversionTable){
         if(descMatch){
             desc = descMatch[0]
         }
-        else if(/".*"/.test(line)){
+        if(/".*"/.test(line)){
             description += line.match(/"(.*)"/)[1].replaceAll("-\\n", "").replaceAll("\\n", " ")
         }
 
@@ -616,19 +616,55 @@ async function regexHiddenItems(textFlags){
 
 
 
-
 async function regexItemsID(textID){
-    textID.match(/#define\s+ITEM_\w+\s+\d+/g).forEach(ID => {
-        itemName = ID.match(/ITEM_\w+/)[0]
-        if(!items[itemName]){
-            const regex = new RegExp(`${itemName}\\w+`)
-            const itemMatch = Object.keys(items).toString().match(regex)
-            if(itemMatch){
-                itemName = itemMatch[0]
+    const lines = textID.split("\n")
+    let conversionTableThreshold = {}, ID = 0
+
+    lines.forEach(line => {
+        const matchItem = line.match(/#define *(ITEM_\w+)/i)
+        if (matchItem){
+            const name = matchItem[1]
+            if (name in items){
+                ID = -1
+                const matchAddInt = line.trim().match(/(\w+) *\+ *(\d+) *\)?/)
+                if (matchAddInt){
+                    if (matchAddInt[1] in conversionTableThreshold && !isNaN(conversionTableThreshold[matchAddInt[1]])){
+                        ID = parseInt(conversionTableThreshold[matchAddInt[1]]) + parseInt(matchAddInt[2])
+                    }
+                }
+                else{
+                    const matchDefineItem = line.trim().match(/#define *(ITEM_\w+) *(\w+)/)
+                    if (matchDefineItem){
+                        if (!isNaN(matchDefineItem[2])){
+                            ID = parseInt(matchDefineItem[2])
+                        }
+                        if (matchDefineItem[2] in conversionTableThreshold){
+                            ID = conversionTableThreshold[matchDefineItem[2]]
+                        }
+                    }
+                }
+                if (ID >= 0){
+                    items[name]["ID"] = ID
+                }
             }
         }
-        if(items[itemName]){
-            items[itemName]["ID"] = ID.match(/ITEM_\w+\s+(\d+)/)[1]
+        else{
+            const matchThreshold = line.match(/#define *(\w+) *\(? *(\w+) *(\+ *(\d+))?/i)
+            if (matchThreshold){
+                ID = 0
+                if (matchThreshold[4]){
+                    ID += parseInt(matchThreshold[4])
+                }
+                if (matchThreshold[2] in items){
+                    ID += items[matchThreshold[2]]["ID"]
+                    conversionTableThreshold[matchThreshold[1]] = ID
+                }
+                else{
+                    if (matchThreshold[2] in conversionTableThreshold && matchThreshold[4]){
+                        conversionTableThreshold[matchThreshold[1]] = parseInt(conversionTableThreshold[matchThreshold[2]]) + parseInt(matchThreshold[4])
+                    }
+                }
+            }
         }
     })
 }

@@ -51,30 +51,14 @@ function regexMovesDescription(textMovesDescription, moves){
 
 function regexMovesID(textMovesID, moves){
     const lines = textMovesID.split("\n")
-    let defines = []
+    let ID = 0
 
     lines.forEach(line => {
-
-        for(let i = 0; i < defines.length; i++){
-            line = line.replace(defines[i][0], defines[i][1])
-        }
-
-        const matchDefine = line.match(/#define *(\w+)/i)
-        const matchID = line.match(/\d+/g)
-        let ID = 0
-        if(matchID){
-            for(let i = 0; i < matchID.length; i++){
-                ID += parseInt(matchID[i])
-            }
-        }
-        if(matchDefine && matchID){
-            const move = matchDefine[1]
-
-            if(move in moves){
-                moves[move]["ID"] = ID
-            }
-            else{
-                defines.push([move, ID])
+        const matchMove = line.match(/#define *(MOVE_\w+)/i)
+        if(matchMove){
+            if(matchMove[1] in moves){
+                moves[matchMove[1]]["ID"] = ID
+                ID++
             }
         }
     })

@@ -1,47 +1,68 @@
 function regexSpecies(textSpecies, species){
     const lines = textSpecies.split("\n")
-    let formsStart = 0, gen9Start = 0, gigaStart = 0, customStart = 0, ID = 0, conversionTable = []
+    let conversionTableThreshold = {}, ID = 0, conversionTableSpecies = {}
 
     lines.forEach(line => {
-        if(/FORMS_START/i.test(line) && !formsStart){
-            formsStart = ID
-        }
-        else if(/GEN9_START/i.test(line) && !gen9Start){
-            gen9Start = formsStart + ID
-        }
-        else if(/GIGANTAMAX_START/i.test(line) && !gigaStart){
-            gigaStart = gen9Start + ID
-        }
-        else if(/CUSTOM_START/i.test(line) && !customStart){
-            customStart = gigaStart + ID
-        }
-
         const matchSpecies = line.match(/#define *(SPECIES_\w+)/i)
-        if(matchSpecies){
-            const name = matchSpecies[1]
-
-
-            const matchSpeciesID = line.trim().match(/SPECIES_\w+$/i)
-            if(matchSpeciesID){
-                conversionTable[name] = matchSpeciesID[0]
-            }
-            else{
-                const matchInt = line.trim().match(/\d+$/)
-                if(matchInt){
-                    ID = parseInt(matchInt[0])
+        if (matchSpecies){
+            let name = matchSpecies[1]
+            ID = -1
+            const matchAddInt = line.trim().match(/(\w+) *\+ *(\d+) *\)?/)
+            if (matchAddInt){
+                if (matchAddInt[1] in conversionTableThreshold && conversionTableThreshold[matchAddInt[1]] in species){
+                    ID = parseInt(species[conversionTableThreshold[matchAddInt[1]]]["ID"]) + parseInt(matchAddInt[2])
+                }
+                else if (matchAddInt[1] in species){
+                    ID = parseInt(species[matchAddInt[1]]["ID"]) + parseInt(matchAddInt[2])
                 }
             }
+            else{
+                const matchInt = line.trim().match(/(\d+) *\)?/)
+                if (matchInt){
+                    ID = parseInt(matchInt[1])
+                }
+                else{
+                    const matchDefineSpecies = line.trim().match(/#define *(SPECIES_\w+) *(SPECIES_\w+)$/)
+                    if (matchDefineSpecies){
+                        if (matchDefineSpecies[2] in species){
+                            ID = species[matchDefineSpecies[2]]["ID"]
+                        }
+                        else{
+                            conversionTableSpecies[matchDefineSpecies[1]] = matchDefineSpecies[2]
+                        }
+                    }
+                }
+            }
+            if (ID >= 0){
+                species[name] = {}
+                species[name]["name"] = name
+
+                species[name]["ID"] = ID
+            }
+        }
+        else{
+            const matchThreshold = line.match(/#define *(\w+) *(SPECIES_\w+)/i)
+            if (matchThreshold && matchThreshold[2] in species)
+                conversionTableThreshold[matchThreshold[1]] = matchThreshold[2]
+        }
+    })
+
+    Object.keys(conversionTableSpecies).forEach(name => {
+        let targets = [name], target = conversionTableSpecies[name]
+        for (let i = 0; i < 30; i++){
+            if (!targets.includes(conversionTableSpecies[target]) && target in conversionTableSpecies){
+                targets.push(target)
+                target = conversionTableSpecies[target]
+            }
+        }
+        if (target in species){
 
             species[name] = {}
             species[name]["name"] = name
 
-            species[name]["ID"] = Math.max(formsStart, gen9Start, gigaStart, customStart) + ID
+            species[name]["ID"] = species[target]["ID"]
         }
     })
-    
-    for(speciesName in conversionTable){
-        species[speciesName]["ID"] = species[conversionTable[speciesName]]["ID"]
-    }
 
     return species
 }
@@ -604,8 +625,9 @@ function regexForms(textForms, species){
         const matchSpecies = line.match(/SPECIES_\w+/i)
         
         if(/FORM_SPECIES_END/i.test(line)){
-            for (let i = 0; i < speciesArray.length; i++)
+            for (let i = 0; i < speciesArray.length; i++){
                 species[speciesArray[i]]["forms"] = speciesArray
+            }
             speciesArray = []
         }
         else if(matchSpecies){

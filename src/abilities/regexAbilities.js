@@ -64,36 +64,41 @@ function regexAbilities(textAbilities, abilities){
 
 function regexAbilitiesID(textAbilitiesID, abilities){
     const lines = textAbilitiesID.split("\n")
-    let customAbilitiesStart = null, ID = 0
+    let conversionTableThreshold = {}, ID = 0
 
     lines.forEach(line => {
-
-        if (/ABILITIES_COUNT_CUSTOM/i.test(line) && !customAbilitiesStart){
-            customAbilitiesStart = ID
-        }
-
         const matchAbility = line.match(/#define *(ABILITY_\w+)/i)
-        if(matchAbility){
-            const name = matchAbility[1]
-
-
-            matchInt = line.match(/\d+/g)
-            if(matchInt){
-                ID = parseInt(matchInt[matchInt.length-1])
-            }
-            else{
-                ID++
-            }
-
-            if(name in abilities){
-                if(Number.isInteger(customAbilitiesStart)){
-                    abilities[name]["ID"] = ID+customAbilitiesStart
+        if (matchAbility){
+            let name = matchAbility[1]
+            if (name in abilities){
+                ID = -1
+                const matchAddInt = line.trim().match(/(\w+) *\+ *(\d+) *\)?/)
+                if (matchAddInt){
+                    if (matchAddInt[1] in conversionTableThreshold){
+                        ID = parseInt(conversionTableThreshold[matchAddInt[1]]) + parseInt(matchAddInt[2])
+                    }
                 }
                 else{
+                    const matchInt = line.trim().match(/(\d+) *\)?/)
+                    if (matchInt){
+                        ID = parseInt(matchInt[1])
+                    }
+                }
+                if (ID >= 0){
                     abilities[name]["ID"] = ID
                 }
             }
         }
+        else{
+            const matchThreshold = line.trim().match(/#define (\w+) *\(? *?(\w+|\d+) *\)?/i)
+            if (matchThreshold){
+                conversionTableThreshold[matchThreshold[1]] = matchThreshold[2]
+                if (matchThreshold[2] in conversionTableThreshold){
+                    conversionTableThreshold[matchThreshold[1]] = conversionTableThreshold[matchThreshold[2]]
+                }
+            }
+        }
     })
+
     return abilities
 }
